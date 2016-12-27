@@ -7,6 +7,15 @@ from basesite.forms import *
 
 class BaseView(View):
     """ To be inherited by every view """
+    def __init__(self):
+        self.template_items = {}
+
+    def post_fetch(self, request):
+        pass
+
+    def get_fetch(self, request):
+        pass
+
     def my_authenticate(self, username, password):
         return authenticate(username=username, password=password)
 
@@ -36,36 +45,28 @@ class BaseView(View):
                 login(request, user)
 
     def post(self, request):
-        if request.method == 'POST':
-            if 'LogInFormSubmit' in request.POST:
-                self.logInFormSubmit(request)
+        """ Fetch the post request from the extended veiw class"""
+        self.post_fetch(request)
+        if 'LogInFormSubmit' in request.POST:
+            self.logInFormSubmit(request)
 
-            if 'SignUpFormSubmit' in request.POST:
-                self.signUpFormSubmit(request)
+        if 'SignUpFormSubmit' in request.POST:
+            self.signUpFormSubmit(request)
 
-            return HttpResponseRedirect('/')
-
-        return render(request, self.template_to_view, {
-            'LIForm': LIForm,
-            'SUForm': SUForm,
-            'user': request.user,
-        })
+        return HttpResponseRedirect('.')
 
     def get(self, request):
-        """
-        Check if template_to_view has been set in an extended view class
-        """
-        self.fetch(request)
+        """ Fetch the get request from the extended veiw class"""
+        self.get_fetch(request)
 
         LIForm = LogInForm()
         SUForm = SignUpForm()
 
-        return render(request, self.template_to_view, {
-            'LIForm': LIForm,
-            'SUForm': SUForm,
-            'user': request.user,
-        })
+        self.template_items['LIForm'] = LIForm
+        self.template_items['SUForm'] = SUForm
+        self.template_items['user'] = request.user
 
+        return render(request, self.template_to_view, self.template_items)
 
 def logout_page(request):
     logout(request)

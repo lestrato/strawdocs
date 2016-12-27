@@ -3,9 +3,12 @@
 
 {% block content %}
 
+<form method="POST">{% csrf_token %}
+
 <div class="row-fluid">
   <h2 class="page-header" style="padding-bottom: 6px;">
-    <input type="text" class="form-control document-title-input" placeholder="Document Title" maxlength="30">
+    {{ DCForm.d_title }}
+    <!-- <input type="text" class="form-control document-title-input" placeholder="Document Title" maxlength="30"> -->
   </h2>
 </div>
 
@@ -16,26 +19,20 @@
         <div class="panel-heading" style="padding-top: 2px; padding-bottom: 2px;">
 
           <div class="input-group">
-            <input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="40">
+            {{ QCForm.q_title }}
+            <!-- <input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="40"> -->
             <addon class="input-group-addon area-span" id="basic-addon2"></addon>
           </div>
-          <!--<form class="form-horizontal">
-            <div class="form-group" style="margin-bottom: 0;">
-              <div class="col-xs-11">
-                <input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="30">
-              </div>
-            </div>
-          </form> -->
         </div>
         <div class="panel-body">
           <div class="question-content">
-            <textarea></textarea>
+            <!-- <textarea></textarea> -->
+            {{ QCForm.content }}
           </div>
         </div>
       </div>
     </div>
   </div>
-
 </div>
 
   <center>
@@ -45,8 +42,9 @@
   <hr>
 
   <center>
-    <a href="doc-example.html" class="btn btn-lg btn-success">Create my document!</a>
+    <button onclick="removeRequired()" type="submit" name="createDocumentSubmit" class="btn btn-lg btn-success">Create my document!</button>
   </center>
+</form>
 
 {% endblock %}
 
@@ -59,6 +57,7 @@ tinymce.init({
   elements : 'mceid1',
   selector: 'textarea',
   height: 100,
+  required: 'False',
   theme: 'modern',
   removed_menuitems: 'newdocument',
   plugins: [
@@ -83,39 +82,18 @@ tinymce.init({
           // if only one panel, add remove button
           if ($("#question-group").children().length == 1) {
             $('addon').replaceWith('<addon class="input-group-addon btn-remove">x</addon>');
-            //$('<span class="input-group-addon btn-remove" id="basic-addon2">x</span>').appendTo('.input-group:last');
           }
-
-          // add new blank question without remove button
-          $('<div class="question">'+
-              '<div class="row-fluid">'  +
-                '<div class="panel panel-default box-shadow">' +
-                  '<div class="panel-heading" style="padding-top: 2px; padding-bottom: 2px;">' +
-                    '<div class="input-group">' +
-                      '<input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="40">' +
-                        '<addon class="input-group-addon btn-remove">x</addon>' +
-                    '</div>' +
-                  '</div>' +
-                  '<div class="panel-body">' +
-                    '<div class="question-content">' +
-                      '<textarea id="'+textareaId+'"></textarea>' +
-                    '</div>' +
-                  '</div>' +
-                '</div>' +
-              '</div>' +
-            '</div>').appendTo( "#question-group" );
-
-            tinymce.EditorManager.execCommand('mceAddEditor', true, textareaId);
-
+          $(".question:last").clone().appendTo("#question-group").find("input[type='text']").val("");
+          $(".question:last").find(".question-content").html('<textarea id="'+textareaId+'"></textarea>');
+          tinymce.EditorManager.execCommand('mceAddEditor', true, textareaId);
+          $(".question:last").find("textarea").attr("name", "content");
       });
 
       $(document).on('click', '.btn-remove', function(e) {
           // destroy tinymce instance
           tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.panel').find('textarea').attr('id'));
-
           // destroy rest of panel
           $(this).closest('.question').remove();
-
           // if only one panel left, destroy remove button
           if ($("#question-group").children().length == 1) {
             $('addon').replaceWith('<addon class="input-group-addon area-span"></addon>');
@@ -125,6 +103,15 @@ tinymce.init({
 
 
   });
+</script>
+
+<script>
+function removeRequired() {
+   /* Remove the 'required' field for the hidden input textarea
+    * not doing so will pick up an unavoidable error for validating the textarea
+    */
+    $(".question-content textarea").removeAttr("required");
+}
 </script>
 
 <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
