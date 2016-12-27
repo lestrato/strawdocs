@@ -29,8 +29,8 @@ Microsoft Visual C++ 9.0 | https://www.microsoft.com/en-us/download/details.aspx
 strawdocs
 ├── main
 │   ├── apps  
-│   ├── static
 │   ├── main
+│   ├── static
 ├── env
 ```
 
@@ -44,7 +44,7 @@ strawdocs
 * Install using: `pip install [file-name]`
 
 ### Customize local settings to your environment
-* cp main/settings.py.example main/settings.py
+* `cp main/settings.py.example main/settings.py`
 * Edit the main/settings.py file and insert local credentials for DATABASES
 
 ### Migrate databases, build front-end components
