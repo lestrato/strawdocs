@@ -1,0 +1,238 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>strawdocs</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+<link rel="stylesheet" href="./strawdocs.css">
+</head>
+
+<body>
+  <div id="wrapper" class="container" style="max-width: 750px;">
+    <div id="wrapper-body">
+      <center>
+        <h1 id="header"><a href="index.html">strawdocs</a></h1>
+      </center>
+      <div class="row-fluid">
+        <h2 class="page-header clearfix">
+            [CSC 373 - Assignment 2] Overview
+            <a class="pull-right" href="#docSettings" data-toggle="modal" ><i class='fa fa-share-alt'></i></a>
+        </h2>
+
+      </div>
+
+      <div id="question-group">
+        <div class="row-fluid">
+          <!--  TODO: views, answers, followings, has/doesnt have best answer-->
+          <div class="panel panel-default box-shadow"> <!--  -->
+            <div class="panel-heading">
+              <div class="row-fluid clearfix">
+              <h3 style="margin: 0;">
+                <a href="question-example.html">Question 1</a>
+                 <small class="pull-right">25 views</small>
+              </h3>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="post-content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Morbi sed nibh a neque aliquet porttitor vel eget nisi.
+            Nunc efficitur, leo vitae fermentum consequat, nunc odio mollis risus, at pretium quam est eu lacus.
+            Vestibulum vitae lorem a mi viverra vehicula. Nullam vestibulum molestie enim, sed luctus orci pulvinar sed.
+              </div>
+            </div>
+            <div class="panel-footer clearfix">
+              <div class="row-fluid">
+                <div class="pull-left">
+                  <a href="question-example.html">5 posts
+                    <em style="color:black">(2 new)</em>
+                  </a>
+                </div>
+                <div class="pull-right">
+                  <small>answered 20 minutes ago</small>
+                   <label class="label label-default">Whale</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="row-fluid">
+          <!--  TODO: views, answers, followings, has/doesnt have best answer-->
+          <div class="panel panel-default box-shadow"> <!--  -->
+            <div class="panel-heading">
+              <div class="row-fluid clearfix">
+                <h3 style="margin: 0;">
+                  <a href="question-example.html">Question 2</a>
+                   <small class="pull-right">11 views</small>
+                </h3>
+              </div>
+            </div>
+            <div class="panel-body">
+              <div class="post-content">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+            Morbi sed nibh a neque aliquet porttitor vel eget nisi.
+            Nunc efficitur, leo vitae fermentum consequat, nunc odio mollis risus, at pretium quam est eu lacus.
+            Vestibulum vitae lorem a mi viverra vehicula. Nullam vestibulum molestie enim, sed luctus orci pulvinar sed.
+              </div>
+            </div>
+            <div class="panel-footer clearfix">
+              <div class="row-fluid">
+                <div class="pull-left">
+                  <a href="question-example.html">1 post</a>
+                </div>
+                <div class="pull-right">
+                  <small>replied 3 hours ago </small>
+                  <label class="label label-default">Cow</label>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+<!--
+      <div class="row-fluid">
+        <center>
+          <a id="btn-question-add" type="button" class="btn btn-lg btn-primary">Add a new question</a>
+        </center>
+      </div>
+
+    </div>
+-->
+    <footer class="site-footer" >
+      <ul style="padding-left: 0;">
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./contact.html">Team</a></li>
+          <li><a href="./support.html">Support</a></li>
+      </ul>
+    </footer>
+
+  </div>
+</body>
+
+<!--  Document Settings HTML -->
+<div id="docSettings" class="modal fade">
+  <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+      <div class="modal-content">
+          <div class="modal-header">
+            <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+            <h4 class="modal-title">Share the strawdoc</h4>
+          </div>
+          <div class="modal-body">
+            <div class="row">
+              <div class="col-xs-10 col-xs-offset-1">
+                <div class="input-group">
+                  <span class="input-group-btn">
+                    <button id="fetchBtn" data-clipboard-target="#docLink" class="btn btn-default" type="button" data-toggle="popover" data-content="Copied!">
+                        <i class="fa fa-link"></i>
+                    </button>
+                  </span>
+                  <input id="docLink" type="text" onfocus="this.select();" class="form-control" value="https://strawdocs.com/fjSDF8jds9F9L" readonly="readonly">
+                </div>
+              </div>
+            </div>
+            <hr style='max-width: 100px; border-top: 2px solid #eee;'>
+            <center>
+
+                  <!-- Facebook -->
+                  <a href="http://www.facebook.com/sharer.php?u=https://simplesharebuttons.com" class="fa-stack fa-2x fa-lg fa-share-facebook">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
+                  </a>
+
+                  <!-- Google+ -->
+                  <a href="https://plus.google.com/share?url=https://simplesharebuttons.com" class="fa-stack fa-2x fa-lg fa-share-googleplus">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                  </a>
+
+                  <!-- Twitter -->
+                  <a href="https://twitter.com/share?url=https://simplesharebuttons.com&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" class="fa-stack fa-2x fa-lg fa-share-twitter">
+                    <i class="fa fa-circle fa-stack-2x"></i>
+                    <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                  </a>
+
+            </center>
+          </div>
+          <div class="modal-footer">
+            <center><button type="button" class="btn btn-primary" href="document-settings.html" data-dismiss="modal" style="width: 100px;">Done</button></center>
+          </div>
+      </div>
+  </div>
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script src="./js/tinymce/tinymce.min.js"></script>
+
+<script>
+tinymce.init({
+  elements : 'mceid1',
+  selector: 'textarea',
+  height: 100,
+  theme: 'modern',
+  removed_menuitems: 'newdocument',
+  plugins: [
+    'advlist autolink lists link image charmap preview hr',
+    'searchreplace code eqneditor',
+    'insertdatetime save table directionality',
+    'paste textpattern imagetools jbimages'
+  ],
+  toolbar1: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image jbimages eqneditor',
+  relative_urls: false
+ });
+</script>
+
+<!--<script>
+$(function() {
+    var questionTotal = 1;
+
+    $(document).on('click', '#btn-question-add', function(e) {
+        questionTotal += 1;
+        textareaId = "mceId"+questionTotal;
+
+        // add new blank question without remove button
+        $('<div class="question">'+
+            '<div class="row-fluid">'  +
+              '<div class="panel panel-default">' +
+                '<div class="panel-heading" style="padding-top: 2px; padding-bottom: 2px;">' +
+                  '<div class="input-group">' +
+                    '<input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="30" area-describedby="basic-addon2">' +
+                  '</div>' +
+                '</div>' +
+                '<div class="panel-body">' +
+                  '<div class="question-content">' +
+                    '<textarea id="'+textareaId+'"></textarea>' +
+                  '</div>' +
+                '</div>' +
+                '<div class="panel-footer clearfix">'+
+                  '<button type="submit" class="btn btn-default btn-question-cancel pull-left">'+
+                    'Cancel'+
+                  '</button>'+
+                  '<button type="submit" class="btn btn-success pull-right">'+
+                    'Post'+
+                  '</button>'+
+                '</div>'+
+              '</div>' +
+            '</div>' +
+          '</div>').appendTo( "#question-group" );
+
+          tinymce.EditorManager.execCommand('mceAddEditor', true, textareaId);
+
+    });
+
+    $(document).on('click', '.btn-question-cancel', function(e) {
+        // destroy tinymce instance
+        tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.panel').find('textarea').attr('id'));
+
+        // destroy rest of panel
+        $(this).closest('.question').remove();
+
+    });
+});
+</script>-->
+
+</html>

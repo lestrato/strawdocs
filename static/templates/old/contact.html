@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>strawdocs</title>
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.6.3/css/font-awesome.min.css" rel="stylesheet" integrity="sha384-T8Gy5hrqNKT+hzMclPo118YTQO6cYprQmhrYwIiQ/3axmI1hQomh7Ud2hPOy8SP1" crossorigin="anonymous">
+<link rel="stylesheet" href="./strawdocs.css">
+</head>
+
+<body>
+  <div id="wrapper" class="container" style="max-width: 750px;">
+    <div id="wrapper-body">
+      <center>
+        <h1 id="header"><a href="index.html">strawdocs</a></h1>
+      </center>
+      <div class="row-fluid">
+        <h2 class="page-header clearfix">
+          <div class="pull-left">
+            Meet the Team
+          </div>
+        </h2>
+
+      </div>
+
+      <div class="row-fluid">
+          <div class="col-sm-4 col-sm-offset-1 text-center">
+            <img src="http://flathash.com/mc" class="avatar img-circle"></img>
+            <h3 style="margin-top: 10px; margin-bottom: 5px;">Fname Lname</h3>
+            <small> Did this stuff and that </small>
+              <div class="row" style="margin-top: 5px;">
+                <!-- Email -->
+                <span class="fa-stack fa-lg fa-link" data-toggle="tooltip" data-placement="bottom" title="fname1@email.com" data-container="body">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+                </span>
+
+                <!-- Twitter -->
+                <a href="https://twitter.com/twitter" class="fa-stack fa-lg fa-link" data-toggle="tooltip" data-placement="bottom" title="@twitter" data-container="body">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+                </a>
+
+                <!-- Google+ -->
+                <a href="https://plus.google.com/108566738628782711443/about" class="fa-stack fa-lg fa-link" data-toggle="tooltip" data-placement="bottom" title="fname" data-container="body">
+                  <i class="fa fa-circle fa-stack-2x"></i>
+                  <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+                </a>
+
+             </div>
+          </div>
+          <hr class="visible-xs-block">
+          <div class="col-sm-4 col-sm-offset-2 text-center">
+            <img src="http://flathash.com/au" class="avatar img-circle"></img>
+            <h3 style="margin-top: 10px; margin-bottom: 5px;">Fname Lname</h3>
+            <small> Did that stuff and this </small>
+            <div class="row" style="margin-top: 5px;">
+              <!-- Email -->
+              <span class="fa-stack fa-lg fa-link" data-toggle="tooltip" data-placement="bottom" title="fname1@email.com" data-container="body">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-envelope-o fa-stack-1x fa-inverse"></i>
+              </span>
+
+              <!-- Twitter -->
+              <a href="https://twitter.com/twitter" class="fa-stack fa-lg fa-link" data-toggle="tooltip" data-placement="bottom" title="@twitter" data-container="body">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
+              </a>
+
+              <!-- Google+ -->
+              <a href="https://plus.google.com/108566738628782711443/about" class="fa-stack fa-lg fa-link" data-toggle="tooltip" data-placement="bottom" title="fname" data-container="body">
+                <i class="fa fa-circle fa-stack-2x"></i>
+                <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
+              </a>
+
+           </div>
+          </div>
+      </div>
+    </div>
+
+    <footer class="site-footer" >
+      <ul style="padding-left: 0;">
+          <li><a href="./about.html">About</a></li>
+          <li><a href="./contact.html">Team</a></li>
+          <li><a href="./support.html">Support</a></li>
+      </ul>
+    </footer>
+
+  </div>
+</body>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
+<script type="text/javascript">
+  $(document).ready(function(){
+      $('[data-toggle="tooltip"]').tooltip();
+      $('[rel=tooltip]').tooltip({container: 'body'});
+
+  });
+</script>
+
+</html>
