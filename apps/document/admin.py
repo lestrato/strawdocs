@@ -32,3 +32,19 @@ class ReplyAdmin(admin.ModelAdmin):
     )
     pass
 admin.site.register(Reply, ReplyAdmin)
+
+class UpvoteAdmin(admin.ModelAdmin):
+    list_display = ('created_by',)
+    fieldsets = (
+        ('Properties', {'fields': ['created_by']}),
+    )
+    pass
+admin.site.register(Upvote, UpvoteAdmin)
+
+class DownvoteAdmin(admin.ModelAdmin):
+    list_display = ('created_by',)
+    fieldsets = (
+        ('Properties', {'fields': ['created_by']}),
+    )
+    pass
+admin.site.register(Downvote, DownvoteAdmin)

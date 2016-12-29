@@ -55,6 +55,32 @@ class Post(models.Model):
     class Meta:
         abstract = True
 
+class Vote(models.Model):
+    ''' Every vote has:
+    - a type: upvote or downvote
+    - a user who created it
+    - a question/answer/reply it references
+    '''
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False
+    )
+    #  generic foreign key to either a question/answer/reply
+    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
+    object_id = models.PositiveIntegerField()
+    content_object = GenericForeignKey('content_type', 'object_id')
+
+    class Meta:
+        abstract = True
+
+class Upvote(Vote):
+    def __str__(self):
+        return self.content_object.slug
+
+class Downvote(Vote):
+    def __str__(self):
+        return self.content_object.slug
+
 class Reply(Post):
     ''' Every reply has:
     - a reply content
@@ -75,14 +101,13 @@ class Reply(Post):
         settings.AUTH_USER_MODEL,
         blank=False
     )
-    upvotes = models.IntegerField(
-        default=0,
-        blank=False,
-    )
     #  generic foreign key to either a question/answer/reply
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
     content_object = GenericForeignKey('content_type', 'object_id')
+
+    upvotes = GenericRelation(Upvote)
+    downvotes = GenericRelation(Downvote)
 
     def __str__(self):
         return self.content_object.slug
@@ -113,19 +138,14 @@ class Question(Post):
         settings.AUTH_USER_MODEL,
         blank=False
     )
-    upvotes = models.IntegerField(
-        default=0,
-        blank=False,
-    )
-    downvotes = models.IntegerField(
-        default=0,
-        blank=False,
-    )
     document = models.ForeignKey(
         'Document',
         on_delete=models.CASCADE,
     )
     replies = GenericRelation(Reply)
+
+    upvotes = GenericRelation(Upvote)
+    downvotes = GenericRelation(Downvote)
     class Meta:
         unique_together = ('title', 'document',)
 
@@ -153,19 +173,14 @@ class Answer(Post):
         settings.AUTH_USER_MODEL,
         blank=False
     )
-    upvotes = models.IntegerField(
-        default=0,
-        blank=False,
-    )
-    downvotes = models.IntegerField(
-        default=0,
-        blank=False,
-    )
     question = models.ForeignKey(
         'Question',
         on_delete=models.CASCADE,
     )
     replies = GenericRelation(Reply)
+
+    upvotes = GenericRelation(Upvote)
+    downvotes = GenericRelation(Downvote)
 
     def __str__(self):
         return self.question.title

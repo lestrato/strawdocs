@@ -157,7 +157,7 @@ class QuestionView(BaseView):
            document = Document.objects.get(slug=doc_slug)
         except Document.DoesNotExist:
             # replace "with page does not exist" page
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            raise Http404("Document does not exist")
 
         # parse the question url into a question title by changing underscores
         # to spaces
@@ -202,7 +202,72 @@ class QuestionView(BaseView):
                     content_object=thread_object,
                 )
                 new_reply.save()
-                pass
+
+        if 'upvoteSubmit' in request.POST:
+            print 'upvote!'
+            object_slug = request.POST["upvoteSubmit"]
+            try:
+                this_object = Question.objects.get(slug=object_slug)
+            except Question.DoesNotExist:
+                try:
+                    this_object = Answer.objects.get(slug=object_slug)
+                except Answer.DoesNotExist:
+                    try:
+                        this_object = Reply.objects.get(slug=object_slug)
+                    except Reply.DoesNotExist:
+                        raise Http404("Post does not exist")
+            try: # check if the user has upvoted this already
+                upvote = this_object.upvotes.get (
+                    created_by=request.user,
+                )
+                upvote.delete()
+            except Upvote.DoesNotExist:
+                try: # check if the user has downvoted this already
+                    downvote = this_object.downvotes.get (
+                        created_by=request.user,
+                    )
+                    downvote.delete()
+                except Downvote.DoesNotExist:
+                    pass
+                # create new upvote object
+                new_upvote = Upvote(
+                    created_by=request.user,
+                    content_object=this_object,
+                )
+                new_upvote.save()
+
+        if 'downvoteSubmit' in request.POST:
+            print 'downvote!'
+            object_slug = request.POST["downvoteSubmit"]
+            try:
+                this_object = Question.objects.get(slug=object_slug)
+            except Question.DoesNotExist:
+                try:
+                    this_object = Answer.objects.get(slug=object_slug)
+                except Answer.DoesNotExist:
+                    try:
+                        this_object = Reply.objects.get(slug=object_slug)
+                    except Reply.DoesNotExist:
+                        raise Http404("Post does not exist")
+            try: # check if the user has downvoted this already
+                downvote = this_object.downvotes.get (
+                    created_by=request.user,
+                )
+                downvote.delete()
+            except Downvote.DoesNotExist:
+                try: # check if the user has upvoted this already
+                    upvote = this_object.upvotes.get (
+                        created_by=request.user,
+                    )
+                    upvote.delete() # remove it
+                except Upvote.DoesNotExist:
+                    pass
+                # create new downvote object
+                new_downvote = Downvote(
+                    created_by=request.user,
+                    content_object=this_object,
+                )
+                new_downvote.save()
 
         if 'LogInFormSubmit' in request.POST:
             self.logInFormSubmit(request)

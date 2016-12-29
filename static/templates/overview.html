@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 {% load title_to_url %}
+{% load latest_activity %}
+{% load format_activity_date %}
 {% block content %}
 
 <div class="row-fluid">
@@ -74,13 +76,15 @@
         <div class="panel-footer clearfix">
           <div class="row-fluid">
             <div class="pull-left">
-              <a href="{{request.path}}/{{ question.title|title_to_url }}">N/A posts
+              <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.answer_set.all.count }} answers
                 <em style="color:black">(N/A new)</em>
               </a>
             </div>
             <div class="pull-right">
-              <small>answered N/A minutes ago</small>
-               <label class="label label-default">N/A</label>
+              {% with last_post=question|latest_activity %}
+              <small>{{last_post|format_activity_date}}</small> <!--answered N/A minutes ago-->
+              <label class="label label-default">{{last_post.created_by}}</label>
+              {% endwith %}
             </div>
           </div>
         </div>
