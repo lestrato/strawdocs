@@ -25,6 +25,10 @@ a {
   cursor: hand;
 }
 
+.page-header {
+    border-bottom: 1px solid #ddd;
+}
+
 .modal-dialog {
   width: 300px;
   margin: 30px auto;
@@ -160,6 +164,19 @@ Overview
 .panel-footer {
   padding: 5px 10px;
 }
+
+/*****************
+Question
+*****************/
+hr.dark {
+   border-top: 1px solid #ddd;
+}
+
+hr.thin {
+  margin-top: 10px; margin-bottom: 10px;
+
+}
+
 /*****************
 Tiny-MCE
 *****************/
