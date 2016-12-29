@@ -26,6 +26,8 @@ from django.conf import settings
 urlpatterns = [
     # all documents/about page
     url(r'^$', Home.as_view()),
+    url(r'^doc/(?P<doc_slug>[a-z||A-Z||0-9]+)$', DocumentOverview.as_view()),
+    url(r'^doc/(?P<doc_slug>[a-z||A-Z||0-9]+)/(?P<question_url>[a-z||A-Z||0-9||_]+)$', QuestionView.as_view()),
 
     # information, login not required
     url(r'^team/$', Team.as_view()),
@@ -33,11 +35,16 @@ urlpatterns = [
 
     # only if logged in
     url(r'^create/$', CreateDocument.as_view()),
-#     url(r'^(?P<doc_slug>[a-z||A-Z||0-9]+)$', DocumentOverview.as_view()),
 
     # misc
     url(r'^logout/$', logout_page),
     url(r'^admin/', admin.site.urls),
+
+    # testing error urls, these get changed when the server is in production
+    url(r'^400/$', bad_request.as_view()),
+    url(r'^403/$', permission_denied.as_view()),
+    url(r'^404/$', page_not_found.as_view()),
+    url(r'^500/$', server_error.as_view()),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
