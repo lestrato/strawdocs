@@ -19,9 +19,6 @@
 </h4> -->
 <h3>Documents You Manage</h3>
 <div class="container-fluid">
-    {% if not documents_managed %}
-      <h4>you're not managing any documents...</h4>
-    {% else %}
     {% for document in documents_managed %}
         <div class="col-sm-12 col-xs-18">
             <div class="panel panel-default">
@@ -38,8 +35,9 @@
                 </div>
             </div>
         </div>
+    {% empty %}
+      <h4>you're not managing any documents...</h4>
     {% endfor %}
-    {% endif %}
 </div>
 <hr>
 <h3>Your Documents</h3>

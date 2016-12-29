@@ -126,6 +126,10 @@ class QuestionView(BaseView):
             # redirect to page not found, temporarily the home page
             raise Http404("Question does not exist")
 
+        # update the question hits
+        question.hits += 1
+        question.save()
+
         self.template_items['question'] = question
 
         answers = Answer.objects.filter(

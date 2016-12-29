@@ -142,10 +142,14 @@ class Question(Post):
         'Document',
         on_delete=models.CASCADE,
     )
+    hits = models.IntegerField(
+        default=0,
+        blank=False,
+    )
     replies = GenericRelation(Reply)
-
     upvotes = GenericRelation(Upvote)
     downvotes = GenericRelation(Downvote)
+
     class Meta:
         unique_together = ('title', 'document',)
 

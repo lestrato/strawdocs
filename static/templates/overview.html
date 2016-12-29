@@ -64,7 +64,7 @@
           <div class="row-fluid clearfix">
           <h3 style="margin: 0;">
             <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.title }}</a>
-             <small class="pull-right">N/A views</small>
+             <small class="pull-right">{{ question.hits }} view{% if question.hits != 1 %}s{% endif %}</small>
           </h3>
           </div>
         </div>
