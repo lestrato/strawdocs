@@ -3,6 +3,7 @@
 {% load title_to_url %}
 {% load latest_activity %}
 {% load format_activity_date %}
+{% load number_new %}
 {% block content %}
 
 <div class="row-fluid">
@@ -76,8 +77,8 @@
         <div class="panel-footer clearfix">
           <div class="row-fluid">
             <div class="pull-left">
-              <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.answer_set.all.count }} answers
-                <em style="color:black">(N/A new)</em>
+              <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.answer_set.all.count }} answer{% if question.answer_set.all.count != 1%}s{% endif %}
+                <em style="color:black">({{question|number_new:user}} new)</em>
               </a>
             </div>
             <div class="pull-right">

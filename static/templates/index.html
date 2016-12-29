@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load number_new %}
 
 {% block content %}
 <h2 class="page-header clearfix">
@@ -27,7 +28,7 @@
                         <h4 style="align-items: center;">
                             <div class="row-fluid"><a href="./doc/{{ document.slug }}">{{document.title}}</a></div>
                             <div class="row-fluid">
-                                <small>N/A unread posts</small>
+                                <small>{{ document|number_new:user }} unread answer</small>
                                 <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
                             </div>
                         </h4>

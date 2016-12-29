@@ -188,3 +188,22 @@ class Answer(Post):
 
     def __str__(self):
         return self.question.title
+
+class UserQuestionLastVisit(models.Model):
+    ''' Every user's last visit to a question has:
+    < a user who visited it
+    < a question
+    - a date when it happened
+    '''
+    visitor = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False
+    )
+    question = models.ForeignKey(
+        'Question',
+        on_delete=models.CASCADE,
+    )
+    created_on = models.DateTimeField(
+        auto_now_add=True,
+        blank=False,
+    )

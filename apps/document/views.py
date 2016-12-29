@@ -1,9 +1,9 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, Http404
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
-from django.http import Http404
+from django.utils import timezone
 
 from basesite.views import *
 from document.models import *
@@ -129,6 +129,23 @@ class QuestionView(BaseView):
         # update the question hits
         question.hits += 1
         question.save()
+
+        # update the user's last visit time
+        try:
+            last_visit = UserQuestionLastVisit.objects.get(
+                question=question,
+                visitor=request.user,
+            )
+            last_visit.created_on = timezone.now()
+            last_visit.save()
+        except UserQuestionLastVisit.DoesNotExist:
+            # first time visiting the question, create a new visit instance
+            new_visit = UserQuestionLastVisit(
+                question = question,
+                visitor = request.user,
+            )
+            new_visit.save()
+
 
         self.template_items['question'] = question
 
