@@ -1,5 +1,5 @@
 from django.contrib import admin
-from document.models import Document, Question
+from document.models import *
 
 class DocumentAdmin(admin.ModelAdmin):
     list_display = ('title', 'slug', 'created_on',)
@@ -16,3 +16,19 @@ class QuestionAdmin(admin.ModelAdmin):
     )
     pass
 admin.site.register(Question, QuestionAdmin)
+
+class AnswerAdmin(admin.ModelAdmin):
+    list_display = ('question', 'created_on',)
+    fieldsets = (
+        ('Properties', {'fields': ('question', 'content')}),
+    )
+    pass
+admin.site.register(Answer, AnswerAdmin)
+
+class ReplyAdmin(admin.ModelAdmin):
+    list_display = ('slug', 'content_type', 'created_on',)
+    fieldsets = (
+        ('Properties', {'fields': ['content']}),
+    )
+    pass
+admin.site.register(Reply, ReplyAdmin)

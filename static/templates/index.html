@@ -19,114 +19,33 @@
 </h4> -->
 <h3>Documents You Manage</h3>
 <div class="container-fluid">
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">BIO203</div>
-                        <div class="row-fluid">
-                            <small>10 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
+    {% if not documents_managed %}
+      <h4>you're not managing any documents...</h4>
+    {% else %}
+    {% for document in documents_managed %}
+        <div class="col-sm-12 col-xs-18">
+            <div class="panel panel-default">
+                <div class="panel-body">
+                    <div class="container-fluid">
+                        <h4 style="align-items: center;">
+                            <div class="row-fluid"><a href="./doc/{{ document.slug }}">{{document.title}}</a></div>
+                            <div class="row-fluid">
+                                <small>N/A unread posts</small>
+                                <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                            </div>
+                        </h4>
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">Compsci blahbla</div>
-                        <div class="row-fluid">
-                            <small>10 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">dicksrus.com</div>
-                        <div class="row-fluid">
-                            <small>10 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
+    {% endfor %}
+    {% endif %}
 </div>
 <hr>
 <h3>Your Documents</h3>
 <div class="container-fluid">
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">BIO203</div>
-                        <div class="row-fluid">
-                            <small>10 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">Compsci blahbla</div>
-                        <div class="row-fluid">
-                            <small>10 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">dicksrus.com</div>
-                        <div class="row-fluid">
-                            <small>10 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="col-sm-4 col-xs-6">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <div class="container-fluid">
-                    <h4 style="align-items: center;">
-                        <div class="row-fluid">dicksrus.com</div>
-                        <div class="row-fluid">
-                            <small>0 unread posts</small>
-                            <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                        </div>
-                    </h4>
-                </div>
-            </div>
-        </div>
-    </div>
+  {% if not documents_following %}
+    <h4>you're not following any documents...</h4>
+  {% endif %}
 </div>
 {% endblock %}

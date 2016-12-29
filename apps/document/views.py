@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
+from django.http import Http404
 
 from basesite.views import *
 from document.models import *
@@ -12,6 +13,11 @@ class Home(BaseView):
     def get_fetch(self, request):
         if request.user.is_authenticated():
             self.template_to_view = 'index.html'
+
+            documents_managed = Document.objects.filter(
+                created_by=request.user
+            )
+            self.template_items['documents_managed'] = documents_managed
         else:
             self.template_to_view = 'about.html'
 
@@ -73,14 +79,8 @@ class CreateDocument(BaseView):
         self.template_items['QCForm'] = QCForm
 
 class DocumentOverview(BaseView):
-    def get_fetch(self, request):
-        self.template_to_view = 'overview.html'
-
-    #  this does nothing atm
     def get(self, request, doc_slug):
-        """
-        Check if template_to_view has been set in an extended view class
-        """
+        self.template_to_view = 'overview.html'
         # this document, based on slug
         try:
            document = Document.objects.get(slug=doc_slug)
@@ -92,13 +92,122 @@ class DocumentOverview(BaseView):
             document=document,
         )
 
+        self.template_items['questions'] = questions
+        self.template_items['document'] = document
+
         LIForm = LogInForm()
         SUForm = SignUpForm()
 
-        return render(request, self.template_to_view, {
-            'LIForm': LIForm,
-            'SUForm': SUForm,
-            'user': request.user,
-            'document': document,
-            'questions': questions,
-        })
+        self.template_items['LIForm'] = LIForm
+        self.template_items['SUForm'] = SUForm
+        self.template_items['user'] = request.user
+
+        return render(request, self.template_to_view, self.template_items)
+
+class QuestionView(BaseView):
+    def get(self, request, doc_slug, question_url):
+        self.template_to_view = 'question.html'
+        # this document, based on slug
+        try:
+           document = Document.objects.get(slug=doc_slug)
+        except Document.DoesNotExist:
+            # replace "with page does not exist" page
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        # parse the question url into a question title by changing underscores
+        # to spaces
+        question_title = question_url.replace ("_", " ")
+        try:
+            question = Question.objects.get(
+                document=document,
+                title = question_title,
+            )
+        except Question.DoesNotExist:
+            # redirect to page not found, temporarily the home page
+            raise Http404("Question does not exist")
+
+        self.template_items['question'] = question
+
+        answers = Answer.objects.filter(
+            question=question,
+        )
+
+        self.template_items['answers'] = answers
+
+        ACForm = AnswerCreationForm()
+        PCForm = PostCreationForm()
+        self.template_items['ACForm'] = ACForm
+        self.template_items['PCForm'] = PCForm
+
+        LIForm = LogInForm()
+        SUForm = SignUpForm()
+
+        self.template_items['LIForm'] = LIForm
+        self.template_items['SUForm'] = SUForm
+        self.template_items['user'] = request.user
+
+        return render(request, self.template_to_view, self.template_items)
+
+    def post(self, request, **kwargs):
+        print request.POST
+        # pass
+        doc_slug = kwargs.get('doc_slug', None)
+        question_url = kwargs.get('question_url', None)
+        try:
+           document = Document.objects.get(slug=doc_slug)
+        except Document.DoesNotExist:
+            # replace "with page does not exist" page
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+
+        # parse the question url into a question title by changing underscores
+        # to spaces
+        question_title = question_url.replace ("_", " ")
+        try:
+            question = Question.objects.get(
+                document=document,
+                title = question_title,
+            )
+        except Question.DoesNotExist:
+            # redirect to page not found, temporarily the home page
+            raise Http404("Question does not exist")
+
+
+        if 'createAnswerSubmit' in request.POST:
+            ACForm = AnswerCreationForm(request.POST)
+            if ACForm.is_valid():
+                # create new answer
+                new_answer = Answer(
+                    content=ACForm.cleaned_data['content'],
+                    created_by=request.user,
+                    question=question,
+                )
+                new_answer.save()
+
+        if 'createReplySubmit' in request.POST:
+            PCForm = PostCreationForm(request.POST)
+            if PCForm.is_valid():
+                # fetch the question or answer object based on the thread_slug
+                thread_slug = request.POST["thread_slug"]
+                try:
+                    thread_object = Question.objects.get(slug=thread_slug)
+                except Question.DoesNotExist:
+                    try:
+                        thread_object = Answer.objects.get(slug=thread_slug)
+                    except Answer.DoesNotExist:
+                        raise Http404("Post does not exist")
+                # create new reply object
+                new_reply = Reply(
+                    content=PCForm.cleaned_data['content'],
+                    created_by=request.user,
+                    content_object=thread_object,
+                )
+                new_reply.save()
+                pass
+
+        if 'LogInFormSubmit' in request.POST:
+            self.logInFormSubmit(request)
+
+        if 'SignUpFormSubmit' in request.POST:
+            self.signUpFormSubmit(request)
+
+        return HttpResponseRedirect('/')

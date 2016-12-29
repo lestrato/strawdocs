@@ -1,5 +1,6 @@
 {% extends "base.html" %}
-
+{% load static %}
+{% load title_to_url %}
 {% block content %}
 
 <div class="row-fluid">
@@ -22,7 +23,7 @@
                                         <i class="fa fa-link"></i>
                                     </button>
                                   </span>
-                                  <input id="docLink" type="text" onfocus="this.select();" class="form-control" value="https://strawdocs.com/{{ document.slug }}" readonly="readonly">
+                                  <input id="docLink" type="text" onfocus="this.select();" class="form-control" value="https://strawdocs.com/doc/{{ document.slug }}" readonly="readonly">
                                 </div>
                             <hr style='max-width: 50px; border-top: 2px solid #eee;'>
                             <center>
@@ -54,38 +55,37 @@
     </h2>
 </div>
 
-  <div id="question-group">
-      {% for question in questions %}
-        <div class="panel panel-default box-shadow"> <!--  -->
-          <div class="panel-heading">
-            <div class="row-fluid clearfix">
-            <h3 style="margin: 0;">
-              <a href="question-example.html">{{ question.title }}</a>
-               <small class="pull-right">25 views</small>
-            </h3>
-            </div>
+<div id="question-group">
+    {% for question in questions %}
+      <div class="panel panel-default box-shadow"> <!--  -->
+        <div class="panel-heading">
+          <div class="row-fluid clearfix">
+          <h3 style="margin: 0;">
+            <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.title }}</a>
+             <small class="pull-right">N/A views</small>
+          </h3>
           </div>
-          <div class="panel-body">
-            <div class="post-content">
-                {{ question.content|safe }}
-            </div>
+        </div>
+        <div class="panel-body">
+          <div class="post-content">
+              {{ question.content|safe }}
           </div>
-          <div class="panel-footer clearfix">
-            <div class="row-fluid">
-              <div class="pull-left">
-                <a href="question-example.html">5 posts
-                  <em style="color:black">(2 new)</em>
-                </a>
-              </div>
-              <div class="pull-right">
-                <small>answered 20 minutes ago</small>
-                 <label class="label label-default">Whale</label>
-              </div>
+        </div>
+        <div class="panel-footer clearfix">
+          <div class="row-fluid">
+            <div class="pull-left">
+              <a href="{{request.path}}/{{ question.title|title_to_url }}">N/A posts
+                <em style="color:black">(N/A new)</em>
+              </a>
+            </div>
+            <div class="pull-right">
+              <small>answered N/A minutes ago</small>
+               <label class="label label-default">N/A</label>
             </div>
           </div>
         </div>
-      {% endfor %}
-
-  </div>
+      </div>
+    {% endfor %}
+</div>
 
 {% endblock %}
