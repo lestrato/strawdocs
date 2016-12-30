@@ -207,3 +207,17 @@ class UserQuestionLastVisit(models.Model):
         auto_now_add=True,
         blank=False,
     )
+
+class UserDocumentFollowing(models.Model):
+    ''' Every document the user follows has:
+    < a user who follows it
+    < a document
+    '''
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False
+    )
+    document = models.ForeignKey(
+        'Document',
+        on_delete=models.CASCADE,
+    )

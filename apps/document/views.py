@@ -14,10 +14,12 @@ class Home(BaseView):
         if request.user.is_authenticated():
             self.template_to_view = 'index.html'
 
-            documents_managed = Document.objects.filter(
-                created_by=request.user
-            )
+            documents_managed = request.user.document_set.all()
             self.template_items['documents_managed'] = documents_managed
+
+            user_document_followings = request.user.userdocumentfollowing_set.all()
+            self.template_items['user_document_followings'] = user_document_followings
+
         else:
             self.template_to_view = 'about.html'
 
@@ -70,6 +72,13 @@ class CreateDocument(BaseView):
                         )
                         new_question.save()
 
+                    # # create a new following userdocumentfollowing isntance
+                    # new_following = UserDocumentFollowing(
+                    #     user=request.user,
+                    #     document=new_document,
+                    # )
+                    # new_following.save()
+
     def get_fetch(self, request):
         self.template_to_view = 'create.html'
         DCForm = DocumentCreationForm()
@@ -103,6 +112,39 @@ class DocumentOverview(BaseView):
         self.template_items['user'] = request.user
 
         return render(request, self.template_to_view, self.template_items)
+
+    def post(self, request, **kwargs):
+        print request.POST
+        # pass
+        doc_slug = kwargs.get('doc_slug', None)
+        try:
+           document = Document.objects.get(slug=doc_slug)
+        except Document.DoesNotExist:
+            # replace "with page does not exist" page
+            raise Http404("Document does not exist")
+
+        if 'changeFavouriteSubmit' in request.POST:
+            try: # check if the user is following this document already
+                existing_following = UserDocumentFollowing.objects.get(
+                    user=request.user,
+                    document=document,
+                )
+                existing_following.delete()
+
+            except UserDocumentFollowing.DoesNotExist: # if not, create a new following instance
+                new_following = UserDocumentFollowing(
+                    user=request.user,
+                    document=document,
+                )
+                new_following.save()
+
+        if 'LogInFormSubmit' in request.POST:
+            self.logInFormSubmit(request)
+
+        if 'SignUpFormSubmit' in request.POST:
+            self.signUpFormSubmit(request)
+
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 class QuestionView(BaseView):
     def get(self, request, doc_slug, question_url):
@@ -204,6 +246,19 @@ class QuestionView(BaseView):
                 )
                 new_answer.save()
 
+                # try: # check if the user is following this document already
+                #     UserDocumentFollowing.objects.get(
+                #         user=request.user,
+                #         document=question.document,
+                #     )
+                # except UserDocumentFollowing.DoesNotExist: # if not, create a new following instance
+                #     new_following = UserDocumentFollowing(
+                #         user=request.user,
+                #         document=new_document,
+                #     )
+                #     new_following.save()
+
+
         if 'createReplySubmit' in request.POST:
             PCForm = PostCreationForm(request.POST)
             if PCForm.is_valid():
@@ -223,6 +278,19 @@ class QuestionView(BaseView):
                     content_object=thread_object,
                 )
                 new_reply.save()
+
+                # try: # check if the user is following this document already
+                #     UserDocumentFollowing.objects.get(
+                #         user=request.user,
+                #         document=question.document,
+                #     )
+                # except UserDocumentFollowing.DoesNotExist: # if not, create a new following instance
+                #     new_following = UserDocumentFollowing(
+                #         user=request.user,
+                #         document=new_document,
+                #     )
+                #     new_following.save()
+
 
         if 'upvoteSubmit' in request.POST:
             print 'upvote!'

@@ -55,6 +55,19 @@ a {
     left: 100%;
     margin-top: -1px;
 }
+
+.button-favourite {
+  height: auto;
+  width: 1.28571429em;
+  line-height: 0em;
+  cursor: pointer;
+  cursor: hand;
+}
+
+.button-favourite > .fa-star {
+  color: #ffeb3b;
+}
+
 /* Base components */
 #wrapper {
     min-height: 100%;

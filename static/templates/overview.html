@@ -4,10 +4,18 @@
 {% load latest_activity %}
 {% load format_activity_date %}
 {% load number_new %}
+{% load is_following %}
 {% block content %}
 
 <div class="row-fluid">
     <h2 class="page-header clearfix">
+        <form style="display: inline;" method="post">{% csrf_token %}
+            <input type="hidden" name="changeFavouriteSubmit">
+            <span class="fa-stack button-favourite" onclick="$(this).closest('form').submit();">
+              {% if document|is_following:user %}<i class="fa fa-star fa-stack-1x"></i>{% endif %}
+              <i class="fa fa-star-o fa-stack-1x "></i>
+            </span>
+        </form>
         [{{ document.title }}] Overview
         <a class="pull-right" href="#docSettings" data-toggle="modal" ><i class='fa fa-share-alt'></i></a>
         <!--  Document Settings HTML -->
