@@ -9,22 +9,47 @@ from basesite.views import *
 from document.models import *
 from document.forms import *
 
+def fetch_document(slug):
+    try:
+       return Document.objects.get(slug=slug)
+    except Document.DoesNotExist:
+        # replace "with page does not exist" page
+        return None
+
+
+def fetch_question(document, title):
+    try:
+        return Question.objects.get(
+            document=document,
+            title=title,
+        )
+    except Question.DoesNotExist:
+        # redirect to page not found, temporarily the home page
+        return None
+
 class Home(BaseView):
-    def get_fetch(self, request):
+    def get_fetch(self, request, template_items):
         if request.user.is_authenticated():
-            self.template_to_view = 'index.html'
-
             documents_managed = request.user.document_set.all()
-            self.template_items['documents_managed'] = documents_managed
-
             user_document_followings = request.user.userdocumentfollowing_set.all()
-            self.template_items['user_document_followings'] = user_document_followings
+
+            template_items['documents_managed'] = documents_managed
+            template_items['user_document_followings'] = user_document_followings
+            return render(request, 'index.html', template_items)
 
         else:
-            self.template_to_view = 'about.html'
+            return render(request, 'about.html', template_items)
 
 @method_decorator(login_required, name='dispatch')
 class CreateDocument(BaseView):
+    def get_fetch(self, request, template_items):
+        DCForm = DocumentCreationForm()
+        QCForm = QuestionCreationForm()
+
+        template_items['DCForm'] = DCForm
+        template_items['QCForm'] = QCForm
+        return render(request, 'create.html', template_items)
+
     def post_fetch(self, request):
         if 'createDocumentSubmit' in request.POST:
             '''
@@ -72,56 +97,33 @@ class CreateDocument(BaseView):
                         )
                         new_question.save()
 
-                    # # create a new following userdocumentfollowing isntance
-                    # new_following = UserDocumentFollowing(
-                    #     user=request.user,
-                    #     document=new_document,
-                    # )
-                    # new_following.save()
+        return HttpResponseRedirect('/')
 
-    def get_fetch(self, request):
-        self.template_to_view = 'create.html'
-        DCForm = DocumentCreationForm()
-        QCForm = QuestionCreationForm()
-
-        self.template_items['DCForm'] = DCForm
-        self.template_items['QCForm'] = QCForm
 
 class DocumentOverview(BaseView):
-    def get(self, request, doc_slug):
-        self.template_to_view = 'overview.html'
+    def get_fetch(self, request, template_items, **kwargs):
+        doc_slug = kwargs.get('doc_slug', None)
         # this document, based on slug
-        try:
-           document = Document.objects.get(slug=doc_slug)
-        except Document.DoesNotExist:
-            # replace "with page does not exist" page
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+        document = fetch_document(slug=doc_slug)
+
+        if not document:
+            return HttpResponseRedirect('/404')
 
         questions = Question.objects.filter(
             document=document,
         )
 
-        self.template_items['questions'] = questions
-        self.template_items['document'] = document
+        template_items['questions'] = questions
+        template_items['document'] = document
+        return render(request, 'overview.html', template_items)
 
-        LIForm = LogInForm()
-        SUForm = SignUpForm()
-
-        self.template_items['LIForm'] = LIForm
-        self.template_items['SUForm'] = SUForm
-        self.template_items['user'] = request.user
-
-        return render(request, self.template_to_view, self.template_items)
-
-    def post(self, request, **kwargs):
-        print request.POST
-        # pass
+    def post_fetch(self, request, **kwargs):
         doc_slug = kwargs.get('doc_slug', None)
         try:
            document = Document.objects.get(slug=doc_slug)
         except Document.DoesNotExist:
             # replace "with page does not exist" page
-            raise Http404("Document does not exist")
+            return HttpResponseRedirect('/')
 
         if 'changeFavouriteSubmit' in request.POST:
             try: # check if the user is following this document already
@@ -138,35 +140,26 @@ class DocumentOverview(BaseView):
                 )
                 new_following.save()
 
-        if 'LogInFormSubmit' in request.POST:
-            self.logInFormSubmit(request)
-
-        if 'SignUpFormSubmit' in request.POST:
-            self.signUpFormSubmit(request)
-
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 class QuestionView(BaseView):
-    def get(self, request, doc_slug, question_url):
-        self.template_to_view = 'question.html'
-        # this document, based on slug
-        try:
-           document = Document.objects.get(slug=doc_slug)
-        except Document.DoesNotExist:
-            # replace "with page does not exist" page
-            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-
-        # parse the question url into a question title by changing underscores
-        # to spaces
+    def get_fetch(self, request, template_items, **kwargs):
+        doc_slug = kwargs.get('doc_slug', None)
+        question_url = kwargs.get('question_url', None)
         question_title = question_url.replace ("_", " ")
-        try:
-            question = Question.objects.get(
-                document=document,
-                title = question_title,
-            )
-        except Question.DoesNotExist:
-            # redirect to page not found, temporarily the home page
-            raise Http404("Question does not exist")
+
+        # this document, based on slug
+        document = fetch_document(slug=doc_slug)
+
+        if not document:
+            return HttpResponseRedirect('/404')
+
+        # parse the question url into a question title by changing underscores to spaces
+        # this question, based on title
+        question = fetch_question(document=document, title=question_title)
+
+        if not question:
+            return HttpResponseRedirect('/404')
 
         # update the question hits
         question.hits += 1
@@ -188,52 +181,36 @@ class QuestionView(BaseView):
             )
             new_visit.save()
 
-
-        self.template_items['question'] = question
-
         answers = Answer.objects.filter(
             question=question,
         )
 
-        self.template_items['answers'] = answers
-
         ACForm = AnswerCreationForm()
         PCForm = PostCreationForm()
-        self.template_items['ACForm'] = ACForm
-        self.template_items['PCForm'] = PCForm
 
-        LIForm = LogInForm()
-        SUForm = SignUpForm()
+        template_items['question'] = question
+        template_items['answers'] = answers
+        template_items['ACForm'] = ACForm
+        template_items['PCForm'] = PCForm
+        return render(request, 'question.html', template_items)
 
-        self.template_items['LIForm'] = LIForm
-        self.template_items['SUForm'] = SUForm
-        self.template_items['user'] = request.user
-
-        return render(request, self.template_to_view, self.template_items)
-
-    def post(self, request, **kwargs):
-        print request.POST
-        # pass
+    def post_fetch(self, request, **kwargs):
         doc_slug = kwargs.get('doc_slug', None)
         question_url = kwargs.get('question_url', None)
-        try:
-           document = Document.objects.get(slug=doc_slug)
-        except Document.DoesNotExist:
-            # replace "with page does not exist" page
-            raise Http404("Document does not exist")
-
-        # parse the question url into a question title by changing underscores
-        # to spaces
         question_title = question_url.replace ("_", " ")
-        try:
-            question = Question.objects.get(
-                document=document,
-                title = question_title,
-            )
-        except Question.DoesNotExist:
-            # redirect to page not found, temporarily the home page
-            raise Http404("Question does not exist")
 
+        # this document, based on slug
+        document = fetch_document(slug=doc_slug)
+
+        if not document:
+            return HttpResponseRedirect('/404')
+
+        # parse the question url into a question title by changing underscores to spaces
+        # this question, based on title
+        question = fetch_question(document=document, title=question_title)
+
+        if not question:
+            return HttpResponseRedirect('/404')
 
         if 'createAnswerSubmit' in request.POST:
             ACForm = AnswerCreationForm(request.POST)
@@ -245,19 +222,6 @@ class QuestionView(BaseView):
                     question=question,
                 )
                 new_answer.save()
-
-                # try: # check if the user is following this document already
-                #     UserDocumentFollowing.objects.get(
-                #         user=request.user,
-                #         document=question.document,
-                #     )
-                # except UserDocumentFollowing.DoesNotExist: # if not, create a new following instance
-                #     new_following = UserDocumentFollowing(
-                #         user=request.user,
-                #         document=new_document,
-                #     )
-                #     new_following.save()
-
 
         if 'createReplySubmit' in request.POST:
             PCForm = PostCreationForm(request.POST)
@@ -279,19 +243,6 @@ class QuestionView(BaseView):
                 )
                 new_reply.save()
 
-                # try: # check if the user is following this document already
-                #     UserDocumentFollowing.objects.get(
-                #         user=request.user,
-                #         document=question.document,
-                #     )
-                # except UserDocumentFollowing.DoesNotExist: # if not, create a new following instance
-                #     new_following = UserDocumentFollowing(
-                #         user=request.user,
-                #         document=new_document,
-                #     )
-                #     new_following.save()
-
-
         if 'upvoteSubmit' in request.POST:
             print 'upvote!'
             object_slug = request.POST["upvoteSubmit"]
@@ -304,7 +255,8 @@ class QuestionView(BaseView):
                     try:
                         this_object = Reply.objects.get(slug=object_slug)
                     except Reply.DoesNotExist:
-                        raise Http404("Post does not exist")
+                        return # ERROR PAGE IN PRODUCTION
+
             try: # check if the user has upvoted this already
                 upvote = this_object.upvotes.get (
                     created_by=request.user,
@@ -337,12 +289,14 @@ class QuestionView(BaseView):
                     try:
                         this_object = Reply.objects.get(slug=object_slug)
                     except Reply.DoesNotExist:
-                        raise Http404("Post does not exist")
+                        return # ERROR PAGE IN PRODUCTION
+
             try: # check if the user has downvoted this already
                 downvote = this_object.downvotes.get (
                     created_by=request.user,
                 )
                 downvote.delete()
+
             except Downvote.DoesNotExist:
                 try: # check if the user has upvoted this already
                     upvote = this_object.upvotes.get (
@@ -358,10 +312,4 @@ class QuestionView(BaseView):
                 )
                 new_downvote.save()
 
-        if 'LogInFormSubmit' in request.POST:
-            self.logInFormSubmit(request)
-
-        if 'SignUpFormSubmit' in request.POST:
-            self.signUpFormSubmit(request)
-
-        return HttpResponseRedirect('/')
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
