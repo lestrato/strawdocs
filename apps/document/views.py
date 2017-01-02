@@ -40,6 +40,9 @@ class Home(BaseView):
         else:
             return render(request, 'about.html', template_items)
 
+    def post_fetch(self, request):
+        return HttpResponseRedirect('/')
+
 @method_decorator(login_required, name='dispatch')
 class CreateDocument(BaseView):
     def get_fetch(self, request, template_items):
@@ -99,7 +102,6 @@ class CreateDocument(BaseView):
 
         return HttpResponseRedirect('/')
 
-
 class DocumentOverview(BaseView):
     def get_fetch(self, request, template_items, **kwargs):
         doc_slug = kwargs.get('doc_slug', None)
@@ -113,8 +115,12 @@ class DocumentOverview(BaseView):
             document=document,
         )
 
+        QCForm = QuestionCreationForm()
+
         template_items['questions'] = questions
         template_items['document'] = document
+        template_items['QCForm'] = QCForm
+
         return render(request, 'overview.html', template_items)
 
     def post_fetch(self, request, **kwargs):
@@ -139,6 +145,26 @@ class DocumentOverview(BaseView):
                     document=document,
                 )
                 new_following.save()
+
+        # check if user is the document creator
+        if request.user == document.created_by:
+            if 'createQuestionSubmit' in request.POST:
+                question = {}
+                question['q_title'] = request.POST['q_title']
+                if not request.POST['content']:
+                    question['content'] = '<p>there isn\'t anything here yet.</p>'
+                else:
+                    question['content'] = request.POST['content']
+                QCForm = QuestionCreationForm(question)
+
+                if QCForm.is_valid():
+                    new_question = Question(
+                        title=QCForm.cleaned_data['q_title'],
+                        content=QCForm.cleaned_data['content'],
+                        created_by=request.user,
+                        document=document,
+                    )
+                    new_question.save()
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -188,6 +214,8 @@ class QuestionView(BaseView):
         ACForm = AnswerCreationForm()
         PCForm = PostCreationForm()
 
+        template_items['document'] = document
+        template_items['document_url'] = '/doc/' + document.slug
         template_items['question'] = question
         template_items['answers'] = answers
         template_items['ACForm'] = ACForm

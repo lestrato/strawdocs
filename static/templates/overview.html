@@ -101,4 +101,76 @@
     {% endfor %}
 </div>
 
+{% if document.created_by == user %}
+<hr>
+
+<center>
+    <div id="btn-add" onclick="showComment(this)" class="btn btn-lg btn-default add-comment">Add another question</div>
+    <div class="hidden-comment" style="display: none;">
+        <form method="POST">{% csrf_token %}
+        <input type='hidden' name="thread_slug" value="{{ question.slug }}"></input>
+        <div class="panel panel-default box-shadow" style="margin-bottom: 10px;">
+              <div class="panel-heading" style="padding-top: 2px; padding-bottom: 2px;">
+
+                <div class="input-group">
+                  {{ QCForm.q_title }}
+                  <!-- <input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="40"> -->
+                  <addon class="input-group-addon area-span" id="basic-addon2"></addon>
+                </div>
+              </div>
+              <div class="panel-body">
+                <div class="question-content">
+                  <!-- <textarea></textarea> -->
+                  {{ QCForm.content }}
+                </div>
+              </div>
+          </div>
+        <div class="row-fluid">
+          <button class="btn btn-sm btn-default btn-cancel pull-left" onclick="hideComment(this)">Cancel</button>
+          <button onclick="removeRequired()" type="submit" name="createQuestionSubmit" class="btn btn-sm btn-success pull-right">Create question</button>
+        </div>
+        </form>
+    </div>
+</center>
+{% endif %}
+
+{% endblock %}
+
+{% block scripts %}
+    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script>
+    tinymce.init({
+      selector: 'textarea',
+      height: 100,
+      theme: 'modern',
+      removed_menuitems: 'newdocument',
+      plugins: [
+        'advlist autolink lists link image charmap preview hr',
+        'searchreplace code eqneditor',
+        'insertdatetime save table directionality',
+        'paste textpattern imagetools'
+      ],
+      toolbar1: 'bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image eqneditor',
+    });
+    </script>
+    <script>
+      function showComment(show_link) {
+        $(show_link).toggle();
+        $(show_link).siblings('.hidden-comment').toggle();
+      }
+      function hideComment(hide_button) {
+        comment = $(hide_button).closest('.hidden-comment');
+        $(comment).siblings('.add-comment').toggle();
+        $(comment).toggle();
+      }
+    </script>
+    <script>
+    function removeRequired() {
+       /* Remove the 'required' field for the hidden input textarea
+        * not doing so will pick up an unavoidable error for validating the textarea
+        */
+        $("textarea").removeAttr("required");
+    }
+    </script>
+
 {% endblock %}
