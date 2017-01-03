@@ -137,23 +137,10 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-    <script>
-    tinymce.init({
-      selector: 'textarea',
-      height: 100,
-      theme: 'modern',
-      removed_menuitems: 'newdocument',
-      plugins: [
-        'advlist autolink lists link image charmap preview hr',
-        'searchreplace code eqneditor',
-        'insertdatetime save table directionality',
-        'paste textpattern imagetools'
-      ],
-      toolbar1: 'bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image eqneditor',
-    });
-    </script>
-    <script>
+    <script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
+    <script type="text/javascript">
       function showComment(show_link) {
         $(show_link).toggle();
         $(show_link).siblings('.hidden-comment').toggle();
@@ -163,14 +150,6 @@
         $(comment).siblings('.add-comment').toggle();
         $(comment).toggle();
       }
-    </script>
-    <script>
-    function removeRequired() {
-       /* Remove the 'required' field for the hidden input textarea
-        * not doing so will pick up an unavoidable error for validating the textarea
-        */
-        $("textarea").removeAttr("required");
-    }
     </script>
 
 {% endblock %}

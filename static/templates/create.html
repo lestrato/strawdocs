@@ -49,29 +49,17 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+<script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>
 <script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script>
+<script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
 
-<script>
-tinymce.init({
-  elements : 'mceid1',
-  selector: 'textarea',
-  height: 100,
-  required: 'False',
-  theme: 'modern',
-  removed_menuitems: 'newdocument',
-  plugins: [
-    'advlist autolink lists link image charmap preview hr',
-    'searchreplace code eqneditor',
-    'insertdatetime save table directionality',
-    'paste textpattern imagetools jbimages'
-  ],
-  toolbar1: 'styleselect | bold italic | alignleft aligncenter alignright alignjustify | bullist numlist outdent indent | link image jbimages eqneditor',
-  relative_urls: false
- });
+<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
+<script type="text/javascript">
+  LatexIT.add('p',true);
 </script>
 
-<script>
+<script type="text/javascript">
   $(function() {
       var questionTotal = 1;
 
@@ -104,19 +92,4 @@ tinymce.init({
 
   });
 </script>
-
-<script>
-function removeRequired() {
-   /* Remove the 'required' field for the hidden input textarea
-    * not doing so will pick up an unavoidable error for validating the textarea
-    */
-    $(".question-content textarea").removeAttr("required");
-}
-</script>
-
-<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
-<script type="text/javascript">
-LatexIT.add('p',true);
-</script>
-
 {% endblock %}

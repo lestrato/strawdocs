@@ -5,7 +5,6 @@
 {% load tz %}
 
 {% block content %}
-
       <h2 class="page-header">[<a href="{{document_url}}">{{document.title}}</a>] {{ question.title }}</h2>
       <div class="row">
         <div class="parent-post col-lg-36">
@@ -119,45 +118,11 @@
 {% endblock %}
 
 {% block scripts %}
-    <script src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-    <script>
-      tinymce.init({
-        selector: 'textarea',
-        height: 100,
-        theme: 'modern',
-        removed_menuitems: 'newdocument',
-        plugins: [
-          'advlist autolink lists link image charmap preview hr',
-          'searchreplace code eqneditor',
-          'insertdatetime save table directionality',
-          'paste textpattern imagetools'
-        ],
-        toolbar1: 'bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image eqneditor',
-      });
-    </script>
-    <script>
-      $( ".replies" ).each(function() {
-        if ($(this).children(".row-fluid").length > 5) {
-          // get count ofo number of children
-          var replyNumber = $(this).children(".row-fluid").length - 5;
-          // hide the other elements
-          $(this).children(":gt(9)").hide();
-
-          // create new expand button
-          $(this).append("<a class='show-comments'>show <b>"+replyNumber+"</b> more comments </a>");
-        }
-      });
-    </script>
-    <script>
-      $(function() {
-        $(document).on('click', '.show-comments', function() {
-          $(this).parent().children(":gt(9)").show();
-          $(this).remove();
-        });
-      });
-    </script>
-
-    <script>
+    <script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/show-all-comments.js" %}"></script>
+    <script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
+    <script type="text/javascript">
       var questionTotal = 1;
 
       function create_tinymce(post_type, slug) {
@@ -225,15 +190,5 @@
         tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.reply-content').find('textarea').attr('id'));
         $(this).closest('.reply-content').remove();
       });
-
-    </script>
-
-    <script>
-    function removeRequired() {
-       /* Remove the 'required' field for the hidden input textarea
-        * not doing so will pick up an unavoidable error for validating the textarea
-        */
-        $("textarea").removeAttr("required");
-    }
     </script>
 {% endblock %}
