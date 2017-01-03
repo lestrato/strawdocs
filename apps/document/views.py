@@ -223,6 +223,8 @@ class QuestionView(BaseView):
         return render(request, 'question.html', template_items)
 
     def post_fetch(self, request, **kwargs):
+        print request.POST
+        # pass
         doc_slug = kwargs.get('doc_slug', None)
         question_url = kwargs.get('question_url', None)
         question_title = question_url.replace ("_", " ")
@@ -252,10 +254,12 @@ class QuestionView(BaseView):
                 new_answer.save()
 
         if 'createReplySubmit' in request.POST:
-            PCForm = PostCreationForm(request.POST)
+            reply = {}
+            reply['content'] = request.POST['content']
+            PCForm = PostCreationForm(reply)
             if PCForm.is_valid():
                 # fetch the question or answer object based on the thread_slug
-                thread_slug = request.POST["thread_slug"]
+                thread_slug = request.POST["createReplySubmit"]
                 try:
                     thread_object = Question.objects.get(slug=thread_slug)
                 except Question.DoesNotExist:
@@ -263,6 +267,8 @@ class QuestionView(BaseView):
                         thread_object = Answer.objects.get(slug=thread_slug)
                     except Answer.DoesNotExist:
                         raise Http404("Post does not exist")
+
+                # check if this reply object exists already
                 # create new reply object
                 new_reply = Reply(
                     content=PCForm.cleaned_data['content'],
@@ -272,7 +278,6 @@ class QuestionView(BaseView):
                 new_reply.save()
 
         if 'upvoteSubmit' in request.POST:
-            print 'upvote!'
             object_slug = request.POST["upvoteSubmit"]
             try:
                 this_object = Question.objects.get(slug=object_slug)
@@ -306,7 +311,6 @@ class QuestionView(BaseView):
                 new_upvote.save()
 
         if 'downvoteSubmit' in request.POST:
-            print 'downvote!'
             object_slug = request.POST["downvoteSubmit"]
             try:
                 this_object = Question.objects.get(slug=object_slug)
@@ -339,5 +343,25 @@ class QuestionView(BaseView):
                     content_object=this_object,
                 )
                 new_downvote.save()
+
+        if 'editPostSubmit' in request.POST:
+            # fetch post by slug
+            try:
+                old_post = Question.objects.get(slug=request.POST['editPostSubmit'])
+            except Question.DoesNotExist:
+                try:
+                    old_post = Answer.objects.get(slug=request.POST['editPostSubmit'])
+                except Answer.DoesNotExist:
+                    raise Http404("Post does not exist")
+
+            # check to make sure user is the one who created it
+            if request.user == old_post.created_by:
+                post = {}
+                post['content'] = request.POST['content']
+                PCForm = PostCreationForm(post)
+                if PCForm.is_valid():
+                    # now change the content
+                    old_post.content = PCForm.cleaned_data['content']
+                    old_post.save()
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

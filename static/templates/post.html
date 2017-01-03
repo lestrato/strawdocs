@@ -1,0 +1,39 @@
+{% load format_date %}
+{% load vote_status %}
+{% load tz %}
+
+<div class="rich-text">
+{{ post.content|safe }}
+</div>
+<div class="row-fluid clearfix parent-post-footer">
+  <div class="pull-left">
+    <form method="POST" style="display: inline">{% csrf_token %}
+        <div class="btn-group btn-group-xs" role="group" aria-label="...">
+          <button name="upvoteSubmit" value="{{ post.slug }}" type="submit" class="btn btn-{% if post.upvotes|vote_status:user %}success{% else %}default{% endif %}">
+            {{post.upvotes.all.count}} <span class="fa fa-thumbs-o-up fa-fw"></span>
+          </button>
+          {% if post_type != "reply" %}
+          <button name="downvoteSubmit" value="{{ post.slug }}"  type="submit" class="btn btn-{% if post.downvotes|vote_status:user %}danger{% else %}default{% endif %}">
+            {{post.downvotes.all.count}} <span class="fa fa-thumbs-o-down fa-fw"></span>
+          </button>
+          {% endif %}
+        </div>
+    </form>
+
+    {% if post_type != "reply" %}
+        {% if post.created_by == user %}
+          <input class="slug" type="hidden" value='{{ post.slug }}'>
+          <a class='edit-comment' style="margin-left: 5px;"><small>edit</small></a>
+        {% endif %}
+    {% endif %}
+  </div>
+  <div class="pull-right"><small>{{ post.created_on|localtime|format_date }}</small> <label class="label label-default">{{post.created_by}}</label>
+    <div class="dropdown pull-right">
+      <a href="#" data-toggle="dropdown" class="dropdown-toggle"><b class="caret"></b></a>
+      <ul class="dropdown-menu">
+        <li><a href="#"><i class="fa fa-reply fa-fw"></i> Reply</a></li>
+        <li><a href="#report-modal" role="button" data-toggle="modal"><i class="fa fa-flag fa-fw"></i> Report</a></li>
+      </ul>
+    </div>
+  </div>
+</div>
