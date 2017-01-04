@@ -2,8 +2,10 @@ var questionTotal = 1;
 
 function create_tinymce(post_type, slug) {
   if (post_type == 'reply') {
+    cancel_btn_name = 'btn-cancel-reply';
     submit_btn_name = 'createReplySubmit';
   } else {
+    cancel_btn_name = 'btn-cancel-edit';
     submit_btn_name = 'editPostSubmit';
   }
 
@@ -11,7 +13,7 @@ function create_tinymce(post_type, slug) {
   "<form method='POST' style='display: inline'>{% csrf_token %}" +
   '<textarea name="content" id="'+textareaId+'"></textarea>'+
   '<div class="row-fluid clearfix">'+
-  '<button type=button class="btn btn-sm btn-default btn-cancel-edit pull-left" style="margin-top: 10px;">'+
+  '<button type=button class="btn btn-sm btn-default ' + cancel_btn_name +' pull-left" style="margin-top: 10px;">'+
   'Cancel'+
   '</button>'+
   '<button value='+slug+' name='+submit_btn_name+' onclick="tinyMCE.triggerSave(); removeRequired();" type="submit" class="btn btn-sm btn-success pull-right" style="margin-top: 10px;">'+
