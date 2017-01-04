@@ -11,14 +11,14 @@
           <form class="vote-submit" method="POST" style="display: inline">{% csrf_token %}
             <input type="hidden" name="upvoteSubmit" value="{{ post.slug }}">
             <button type="submit" class="btn {% if post_type != 'reply' %}btn-group-left{% endif %} btn-{% if post.upvotes|vote_status:user %}success{% else %}default{% endif %}">
-              {{post.upvotes.all.count}} <span class="fa fa-thumbs-o-up fa-fw"></span>
+              <div style="display:inline">{{post.upvotes.all.count}} </div><span class="fa fa-thumbs-o-up fa-fw"></span>
             </button>
           </form>
           {% if post_type != "reply" %}
             <form class="vote-submit" method="POST" style="display: inline">{% csrf_token %}
               <input type="hidden" name="downvoteSubmit" value="{{ post.slug }}">
               <button type="submit" class="btn btn-group-right btn-{% if post.downvotes|vote_status:user %}danger{% else %}default{% endif %}">
-                {{post.downvotes.all.count}} <span class="fa fa-thumbs-o-down fa-fw"></span>
+                <div style="display:inline">{{post.downvotes.all.count}} </div><span class="fa fa-thumbs-o-down fa-fw"></span>
               </button>
             </form>
           {% endif %}

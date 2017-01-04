@@ -127,7 +127,6 @@
             // AJAX for posting
             var self = $(this); //<-- Set up here.
             event.preventDefault();
-            console.log("vote submit")  // sanity check
 
             $.ajax({
                 data: $(this).serialize(), // get the form data
@@ -143,17 +142,31 @@
                       });
                   } else {
                       $(self).closest('.btn-group').find('button').each( function() {
-                        $(this).removeClass('btn-success');
-                        $(this).removeClass('btn-danger');
-                        $(this).removeClass('btn-default');
+                        count_div = $(this).find('div');
+                        if ($(this).hasClass('btn-success')) {
+                          $(this).removeClass('btn-success');
+                          curr_vote_count = parseInt($(count_div).text());
+                          $(count_div).text((curr_vote_count - 1).toString() + ' ');
+                        } else if ($(this).hasClass('btn-danger')) {
+                          $(this).removeClass('btn-danger');
+                          curr_vote_count = parseInt($(count_div).text());
+                          $(count_div).text((curr_vote_count - 1).toString() + ' ');
+                        }
                         $(this).addClass('btn-default');
                       });
                       // color the right one
                       button = $(self).find('button');
+                      count_div = $(button).find('div');
                       if (response == 'upvote') {
+                        $(button).removeClass('btn-default');
                         $(button).addClass('btn-success');
+                        curr_vote_count = parseInt($(count_div).text());
+                        $(count_div).text((curr_vote_count + 1).toString() + ' ');
                       } else if (response == 'downvote') {
+                        $(button).removeClass('btn-default');
                         $(button).addClass('btn-danger');
+                        curr_vote_count = parseInt($(count_div).text());
+                        $(count_div).text((curr_vote_count + 1).toString() + ' ');
                       }
                   }
                 },
