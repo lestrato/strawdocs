@@ -122,7 +122,51 @@
     <script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script>
     <script type="text/javascript" src="{% static "js/show-all-comments.js" %}"></script>
     <script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
+    <script type="text/javascript">
+        $('.vote-submit').submit(function() { // catch the form's submit event
+            // AJAX for posting
+            var self = $(this); //<-- Set up here.
+            event.preventDefault();
+            console.log("vote submit")  // sanity check
 
+            $.ajax({
+                data: $(this).serialize(), // get the form data
+                type: $(this).attr('method'), // GET or POST
+                url: $(this).attr('action'), // the file to call
+
+                // handle a successful response
+                success : function(response) {
+                  if (response.constructor == {}.constructor) {
+                     // some error message TODO: maybe there's a more delicate way to do this
+                      $.each( response, function( key, value ) {
+                        $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
+                      });
+                  } else {
+                      $(self).closest('.btn-group').find('button').each( function() {
+                        $(this).removeClass('btn-success');
+                        $(this).removeClass('btn-danger');
+                        $(this).removeClass('btn-default');
+                        $(this).addClass('btn-default');
+                      });
+                      // color the right one
+                      button = $(self).find('button');
+                      if (response == 'upvote') {
+                        $(button).addClass('btn-success');
+                      } else if (response == 'downvote') {
+                        $(button).addClass('btn-danger');
+                      }
+                  }
+                },
+
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        });
+    </script>
     <script type="text/javascript">
       var questionTotal = 1;
 

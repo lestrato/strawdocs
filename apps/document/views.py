@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
-from django.http import HttpResponseRedirect, Http404
+from django.http import HttpResponseRedirect, Http404, HttpResponse, JsonResponse
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
@@ -288,13 +288,16 @@ class QuestionView(BaseView):
                     try:
                         this_object = Reply.objects.get(slug=object_slug)
                     except Reply.DoesNotExist:
-                        return # ERROR PAGE IN PRODUCTION
+                        error_message = 'The post does not exist anymore.'
+                        ReplyNotExistError = {'error': error_message}
+                        return JsonResponse(ReplyNotExistError)
 
             try: # check if the user has upvoted this already
                 upvote = this_object.upvotes.get (
                     created_by=request.user,
                 )
                 upvote.delete()
+
             except Upvote.DoesNotExist:
                 try: # check if the user has downvoted this already
                     downvote = this_object.downvotes.get (
@@ -309,6 +312,7 @@ class QuestionView(BaseView):
                     content_object=this_object,
                 )
                 new_upvote.save()
+                return HttpResponse('upvote')
 
         if 'downvoteSubmit' in request.POST:
             object_slug = request.POST["downvoteSubmit"]
@@ -321,7 +325,9 @@ class QuestionView(BaseView):
                     try:
                         this_object = Reply.objects.get(slug=object_slug)
                     except Reply.DoesNotExist:
-                        return # ERROR PAGE IN PRODUCTION
+                        error_message = 'The post does not exist anymore.'
+                        ReplyNotExistError = {'error': error_message}
+                        return JsonResponse(ReplyNotExistError)
 
             try: # check if the user has downvoted this already
                 downvote = this_object.downvotes.get (
@@ -343,6 +349,7 @@ class QuestionView(BaseView):
                     content_object=this_object,
                 )
                 new_downvote.save()
+                return HttpResponse('downvote')
 
         if 'editPostSubmit' in request.POST:
             # fetch post by slug

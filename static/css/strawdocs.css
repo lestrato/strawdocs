@@ -111,6 +111,31 @@ a {
 }
 
 /*****************
+Document
+*****************/
+/* button group fix */
+.btn-group > form > .btn, .btn-group-vertical > form > .btn {
+    position: relative;
+    float: left;
+}
+
+.btn-group-xs > form > .btn {
+    padding: 1px 5px;
+    font-size: 12px;
+    line-height: 1.5;
+}
+
+.btn-group-right {
+    border-top-left-radius: 0;
+    border-bottom-left-radius: 0;
+}
+
+.btn-group-left {
+    border-top-right-radius: 0;
+    border-bottom-right-radius: 0;
+}
+
+/*****************
 Team
 *****************/
 .avatar {
