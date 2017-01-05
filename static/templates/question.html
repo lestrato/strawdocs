@@ -26,44 +26,42 @@
         </div>
       </div>
 
-      <h2 class="page-header">Answers
+      <h2 class="page-header" id="answers">Answers
         <div class="dropdown dropdown-text pull-right">
           <a href="#" data-toggle="dropdown" class="dropdown-toggle">Sort by <b class="caret"></b></a>
           <ul class="dropdown-menu">
-            <li><a href="#"><i class="fa fa-comments-o fa-fw"></i> Active</a></li>
-            <li><a href="#"><i class="fa fa-clock-o fa-fw"></i> Oldest</a></li>
-            <li><a href="#"><i class="fa fa-thumbs-o-up fa-fw"></i> Votes</a></li>
+            <li><a href="?sortby=active#answers"><i class="fa fa-comments-o fa-fw"></i> Active</a></li>
+            <li><a href="?sortby=oldest#answers"><i class="fa fa-clock-o fa-fw"></i> Oldest</a></li>
+            <li><a href="?sortby=votes#answers"><i class="fa fa-thumbs-o-up fa-fw"></i> Votes</a></li>
           </ul>
         </div>
       </h2>
 
-      <div id="answers">
-        {% for answer in answers %}
-          <div class="row">
-            <div class="parent-post col-lg-36">
-              <div class='editable-comment'>
-                  {% include "post.html" with post_type="answer" post=answer user=user %}
-              </div>
-              <hr class="thin">
+      {% for answer in answers %}
+        <div class="row">
+          <div class="parent-post col-lg-36">
+            <div class='editable-comment'>
+                {% include "post.html" with post_type="answer" post=answer user=user %}
             </div>
-
-            <div class="replies col-xs-34 col-xs-offset-2">
-              {% for reply in answer.replies.all %}
-                  {% include "post.html" with post_type="reply" post=reply %}
-                  <hr class="thin">
-              {% endfor %}
-
-              <input class="slug" type="hidden" value='{{ answer.slug }}'>
-              <a class='add-comment'>add a comment</a>
-            </div>
+            <hr class="thin">
           </div>
-          <hr class="dark">
 
-        {% empty %}
-          <div class="container-fluid"><h4>there are no answers yet...</h4></div>
-          <hr class="dark">
-        {% endfor %}
-      </div>
+          <div class="replies col-xs-34 col-xs-offset-2">
+            {% for reply in answer.replies.all %}
+                {% include "post.html" with post_type="reply" post=reply %}
+                <hr class="thin">
+            {% endfor %}
+
+            <input class="slug" type="hidden" value='{{ answer.slug }}'>
+            <a class='add-comment'>add a comment</a>
+          </div>
+        </div>
+        <hr class="dark">
+
+      {% empty %}
+        <div class="container-fluid"><h4>there are no answers yet...</h4></div>
+        <hr class="dark">
+      {% endfor %}
 
       <div class="row-fluid">
         <h4>Add an answer</h4>
@@ -141,32 +139,27 @@
                         $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
                       });
                   } else {
+                      // change the values of the buttons
                       $(self).closest('.btn-group').find('button').each( function() {
                         count_div = $(this).find('div');
-                        if ($(this).hasClass('btn-success')) {
-                          $(this).removeClass('btn-success');
-                          curr_vote_count = parseInt($(count_div).text());
-                          $(count_div).text((curr_vote_count - 1).toString() + ' ');
-                        } else if ($(this).hasClass('btn-danger')) {
-                          $(this).removeClass('btn-danger');
+                        if ($(this).hasClass('btn-success') || $(this).hasClass('btn-danger')) {
                           curr_vote_count = parseInt($(count_div).text());
                           $(count_div).text((curr_vote_count - 1).toString() + ' ');
                         }
+                        $(this).removeClass('btn-default');
+                        $(this).removeClass('btn-success');
+                        $(this).removeClass('btn-danger');
                         $(this).addClass('btn-default');
                       });
-                      // color the right one
+                      // color the right button and change the value of the pressed button
                       button = $(self).find('button');
                       count_div = $(button).find('div');
-                      if (response == 'upvote') {
+                      if (response == 'upvote' || response == 'downvote') {
                         $(button).removeClass('btn-default');
-                        $(button).addClass('btn-success');
                         curr_vote_count = parseInt($(count_div).text());
                         $(count_div).text((curr_vote_count + 1).toString() + ' ');
-                      } else if (response == 'downvote') {
-                        $(button).removeClass('btn-default');
-                        $(button).addClass('btn-danger');
-                        curr_vote_count = parseInt($(count_div).text());
-                        $(count_div).text((curr_vote_count + 1).toString() + ' ');
+                        if (response == 'upvote'){ $(button).addClass('btn-success'); }
+                        else if (response == 'downvote') { $(button).addClass('btn-danger'); }
                       }
                   }
                 },

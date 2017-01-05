@@ -9,10 +9,10 @@
 
 <div class="row-fluid">
     <h2 class="page-header clearfix">
-        <form style="display: inline;" method="post">{% csrf_token %}
+        <form id="change-favourite-submit" style="display: inline;" method="post">{% csrf_token %}
             <input type="hidden" name="changeFavouriteSubmit">
-            <span class="fa-stack button-favourite" onclick="$(this).closest('form').submit();">
-              {% if document|is_following:user %}<i class="fa fa-star fa-stack-1x"></i>{% endif %}
+            <span class="fa-stack button-favourite">
+              <i id="fa-star" {% if not document|is_following:user %}style='display: none'{% endif %} class="fa fa-star fa-stack-1x"></i>
               <i class="fa fa-star-o fa-stack-1x "></i>
             </span>
         </form>
@@ -150,6 +150,36 @@
         $(comment).siblings('.add-comment').toggle();
         $(comment).toggle();
       }
+    </script>
+    <script type="text/javascript">
+        $('.button-favourite').on('click', function(event){
+            // AJAX for posting
+            event.preventDefault();
+            var self = $(this); //<-- Set up here.
+            form = $(this).closest('form');
+            $.ajax({
+                data: $(form).serialize(), // get the form data
+                type: $(form).attr('method'), // GET or POST
+                url: $(form).attr('action'), // the file to call
+                // handle a successful response
+                success : function(response) {
+                  if (response.constructor == {}.constructor) {
+                     // some error message TODO: maybe there's a more delicate way to do this
+                      $.each( response, function( key, value ) {
+                        $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
+                      });
+                    } else {
+                      $("#fa-star").toggle();
+                    }
+                },
+                // handle a non-successful response
+                error : function(xhr,errmsg,err) {
+                    $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                        " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+                    console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+                }
+            });
+        });
     </script>
 
 {% endblock %}

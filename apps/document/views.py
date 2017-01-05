@@ -4,6 +4,7 @@ from django.http import HttpResponseRedirect, Http404, HttpResponse, JsonRespons
 from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
+from django.db.models import Count
 
 from basesite.views import *
 from document.models import *
@@ -207,10 +208,31 @@ class QuestionView(BaseView):
             )
             new_visit.save()
 
-        answers = Answer.objects.filter(
-            question=question,
-        )
+        # get sortby filter
+        sortby = request.GET.get('sortby', False)
+        if sortby and sortby == 'active' or sortby == 'votes' or sortby == 'oldest':
+            if request.GET['sortby'] == 'active':
+                answers = Answer.objects.filter(
+                    question=question,
+                ).annotate(
+                    num_posts=Count('replies'),
+                ).order_by('-num_posts')
+            elif request.GET['sortby'] == 'votes':
+                answers = Answer.objects.filter(
+                    question=question,
+                ).annotate(
+                    net_votes=(Count('upvotes')-Count('downvotes')),
+                ).order_by('-net_votes')
+            elif request.GET['sortby'] == 'oldest':
+                answers = Answer.objects.filter(
+                    question=question,
+                ).order_by('created_on')
+        else:
+            answers = Answer.objects.filter(
+                question=question,
+            ).order_by('-created_on')
 
+        # pass
         ACForm = AnswerCreationForm()
         PCForm = PostCreationForm()
 
