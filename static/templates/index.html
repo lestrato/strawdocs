@@ -5,10 +5,10 @@
         <i class="fa fa-file-text fa-fw"></i> Documents
     </div>
     <div class="pull-right">
-        <a href="/create" data-toggle="modal" class="btn btn-xs btn-default">
-            <i class="fa fa-plus fa-fw"></i>
+        <a href="/create" class="btn btn-xs btn-default">
+            <i class="fa fa-plus fa-fw"></i> Create
             <div class="hidden-xs" style="display: inline;">
-                New strawdoc
+                 strawdoc
             </div>
         </a>
     </div>
@@ -19,18 +19,104 @@
 <h3>Documents You Manage <div>({{ documents_managed.count }})</div></h3>
 <div class="container-fluid">
     {% for document in documents_managed %}
-        {% include "document_section.html" with document=document %}
-    {% empty %}
-      <h4>you're not managing any documents...</h4>
+        {% include "document_section.html" with document=document doc_type="managed"%}
     {% endfor %}
+    <div class="col-sm-18 col-xs-36">
+        <a href="/create" class="btn btn-xs btn-default btn-block" style="height: 60px; border: 1px dashed #dddddd">
+            <h4 style="margin-top: 20px;"><i class="fa fa-plus fa-fw"></i> Create a new strawdoc</h4>
+        </a>
+    </div>
 </div>
 <hr>
+<div id="your-starred-documents"</div>
 <h3>Your Starred Documents <div>({{ user_document_followings.count }})</div></h3>
 <div class="container-fluid">
   {% for following in user_document_followings %}
-    {% include "document_section.html" with document=following.document %}
+    {% include "document_section.html" with document=following.document doc_type="starred"%}
   {% empty %}
     <h4>you haven't starred any documents...</h4>
   {% endfor %}
 </div>
+</div>
+
+<!--  Document Unmanage HTML -->
+<div id="docUnmanage" class="modal fade">
+    <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="container-fluid">
+                    <h3 class="modal-title">Unmanage Document</h3>
+                    <hr>
+                    <h4> Are you sure you want to <div style="display: inline; color: #8a6d3b">revoke your own</div> permissions to edit and moderate this document?</h4>
+                    <div class="alert alert-warning"> You are the only one managing this document. By leaving no one in charge, questions cannot be created and new posts will remain unmoderated.</div>
+                    <hr>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <form method="post" style="display: inline">{% csrf_token %}
+                    <input class="doc-slug" name="doc_slug" type="hidden">
+                    <button type="button" class="btn btn-warning pull-right">Unmanage</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!--  Document Delete HTML -->
+<div id="docDelete" class="modal fade">
+    <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="container-fluid">
+                    <h3 class="modal-title">Delete Document</h3>
+                    <hr>
+                    <h4> Are you sure you want to destroy '<div id="doc-name" style="display: inline; color:#a94442"></div>' and all of its questions, answers, and replies?</h4>
+                    <div class="alert alert-danger"> This is an irrevertible change. Once you click delete you cannot get this data back. </div>
+                    <hr>
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                    <form method="post" style="display: inline">{% csrf_token %}
+                    <input class="doc-slug" name="doc_slug" type="hidden">
+                    <button name="deleteDocumentSubmit" type="submit" class="btn btn-danger pull-right">Delete</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+    function doc_settings(title, slug) {
+      // inject the title into the form
+      $(".doc-name").text(title);
+      // inject the slug into the form
+      $(".doc-slug").val(slug);
+    }
+</script>
+
+<script type="text/javascript">
+    // AJAX for unfavouriting
+  $('.change-favourite-form').submit(function(e) { // catch the form's submit event
+      e.preventDefault();
+      var self = $(this); //<-- Set up here.
+      $.ajax({
+          data: $(this).serialize(), // get the form data
+          type: $(this).attr('method'), // GET or POST
+          url: $(this).attr('action'), // the file to call
+          // handle a successful response
+          success : function(response) {
+              $("#your-starred-documents").replaceWith($(response).find("#your-starred-documents"));
+          },
+          // handle a non-successful response
+          error : function(xhr,errmsg,err) {
+              $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                  " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+              console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+          }
+      });
+  });
+</script>
+
 {% endblock %}

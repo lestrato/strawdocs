@@ -6,12 +6,28 @@
                 <div class="row-fluid">
                     <div class="col-xs-30">
                         <h4>
-                            <a href="./doc/{{ document.slug }}">{{document.title}}</a><br>
+                            <a class="doc-title" href="./doc/{{ document.slug }}">{{document.title}}</a><br>
                             <small>{{ document|number_new:user }} unread answer{% if document|number_new:user|str_to_int != 1 %}s{% endif %}</small>
                         </h4>
                     </div>
                     <div class="col-xs-6">
-                          <br><a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                          <br>
+                          <div class="dropdown pull-right">
+                              <a class="btn btn-default btn-xs" data-toggle="dropdown" class="dropdown-toggle"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                              <ul class="dropdown-menu">
+                                 {% if doc_type == "managed" %}
+                                 <li><a onclick="doc_settings('{{document.title}}', '{{document.slug}}')" href="#docUnmanage" data-toggle="modal"><i class="fa fa-user-times fa-fw"></i> Unmanage</a></li>
+                                 <li><a onclick="doc_settings('{{document.title}}', '{{document.slug}}')" href="#docDelete" data-toggle="modal"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
+                                 {% else %}
+                                 <li>
+                                   <form class="change-favourite-form" style="display:inline" method="POST">{% csrf_token %}
+                                     <input type="hidden" name="removeFavouriteSubmit" value='{{document.slug}}'>
+                                     <a onclick="$(this).closest('form').submit();"><i class="fa fa-star-o fa-fw"></i> Unstar</a>
+                                   </form>
+                                </li>
+                                 {% endif %}
+                              </ul>
+                          </div>
                     </div>
                 </div>
         </div>

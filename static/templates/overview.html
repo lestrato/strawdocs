@@ -152,7 +152,7 @@
       }
     </script>
     <script type="text/javascript">
-        $('.button-favourite').on('click', function(event){
+        $(document).on('click', ".button-favourite", function(event){
             // AJAX for posting
             event.preventDefault();
             var self = $(this); //<-- Set up here.
@@ -163,14 +163,7 @@
                 url: $(form).attr('action'), // the file to call
                 // handle a successful response
                 success : function(response) {
-                  if (response.constructor == {}.constructor) {
-                     // some error message TODO: maybe there's a more delicate way to do this
-                      $.each( response, function( key, value ) {
-                        $('#error_div').html('<div class="alert alert-danger">'+value+'</div>');
-                      });
-                    } else {
-                      $("#fa-star").toggle();
-                    }
+                  $("#change-favourite-submit").replaceWith($(response).find("#change-favourite-submit"));
                 },
                 // handle a non-successful response
                 error : function(xhr,errmsg,err) {

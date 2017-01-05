@@ -42,6 +42,42 @@ class Home(BaseView):
             return render(request, 'about.html', template_items)
 
     def post_fetch(self, request):
+        print request.POST
+        if 'deleteDocumentSubmit' in request.POST:
+            '''
+            Delete the document, if the user is a manager (creator) of it
+            '''
+            # check if the user created the document
+            try:
+               document = Document.objects.get(
+                    slug=request.POST['doc_slug'],
+                    created_by=request.user,
+                )
+            except Document.DoesNotExist:
+                # replace "with page does not exist" page
+                return HttpResponseRedirect('/404')
+            document.delete()
+
+        if 'removeFavouriteSubmit' in request.POST:
+            # first fetch the document
+            try:
+               document = Document.objects.get(
+                    slug=request.POST['removeFavouriteSubmit'],
+                )
+            except Document.DoesNotExist:
+                # replace "with page does not exist" page
+                return HttpResponseRedirect('/404')
+
+            try: # check if the user is following this document already
+                existing_following = UserDocumentFollowing.objects.get(
+                    user=request.user,
+                    document=document,
+                )
+                existing_following.delete()
+
+            except UserDocumentFollowing.DoesNotExist: # if not, create a new following instance
+                return HttpResponseRedirect('/404')
+
         return HttpResponseRedirect('/')
 
 @method_decorator(login_required, name='dispatch')
@@ -301,6 +337,7 @@ class QuestionView(BaseView):
 
         if 'upvoteSubmit' in request.POST:
             object_slug = request.POST["upvoteSubmit"]
+            post_type = None
             try:
                 this_object = Question.objects.get(slug=object_slug)
             except Question.DoesNotExist:
@@ -309,6 +346,7 @@ class QuestionView(BaseView):
                 except Answer.DoesNotExist:
                     try:
                         this_object = Reply.objects.get(slug=object_slug)
+                        post_type = 'reply'
                     except Reply.DoesNotExist:
                         error_message = 'The post does not exist anymore.'
                         ReplyNotExistError = {'error': error_message}
@@ -334,10 +372,12 @@ class QuestionView(BaseView):
                     content_object=this_object,
                 )
                 new_upvote.save()
-                return HttpResponse('upvote')
+
+            return render(request, 'post.html', {'post':this_object,  'post_type':post_type})
 
         if 'downvoteSubmit' in request.POST:
             object_slug = request.POST["downvoteSubmit"]
+            post_type = None
             try:
                 this_object = Question.objects.get(slug=object_slug)
             except Question.DoesNotExist:
@@ -346,6 +386,7 @@ class QuestionView(BaseView):
                 except Answer.DoesNotExist:
                     try:
                         this_object = Reply.objects.get(slug=object_slug)
+                        post_type = 'reply'
                     except Reply.DoesNotExist:
                         error_message = 'The post does not exist anymore.'
                         ReplyNotExistError = {'error': error_message}
@@ -371,7 +412,8 @@ class QuestionView(BaseView):
                     content_object=this_object,
                 )
                 new_downvote.save()
-                return HttpResponse('downvote')
+
+            return render(request, 'post.html', {'post':this_object,  'post_type':post_type})
 
         if 'editPostSubmit' in request.POST:
             # fetch post by slug

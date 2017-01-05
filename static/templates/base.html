@@ -20,13 +20,18 @@
     </head>
 
     <body>
+        <div class="left ribbon-holder">
+          <div class="darkblue ribbon">
+            <span class="text">Now in Alpha! </span>
+          </div>
+        </div>
         <div id="wrapper" class="container">
         <div id="wrapper-body">
             <div class="row">
               <div id="nav-link" class="pull-right">
                   {% if user.is_authenticated %}
                   <div class="dropdown pull-right">
-                      <a href="#" data-toggle="dropdown" class="dropdown-toggle">{{ user.username }} <b class="caret"></b></a>
+                      <a id="nav-dropdown" data-toggle="dropdown" class="dropdown-toggle">{{ user.username }} <b class="caret"></b></a>
                       <ul class="dropdown-menu">
                          <li><a href="/"><i class="fa fa-file-text fa-fw"></i> Documents</a></li>
                          <li><a href="/settings"><i class="fa fa-gear fa-fw"></i> Settings</a></li>
