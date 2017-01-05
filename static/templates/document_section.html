@@ -1,0 +1,19 @@
+{% load number_new %}
+{% load str_to_int %}
+<div class="col-sm-18 col-xs-36">
+    <div class="panel panel-default">
+        <div class="panel-body">
+                <div class="row-fluid">
+                    <div class="col-xs-30">
+                        <h4>
+                            <a href="./doc/{{ document.slug }}">{{document.title}}</a><br>
+                            <small>{{ document|number_new:user }} unread answer{% if document|number_new:user|str_to_int != 1 %}s{% endif %}</small>
+                        </h4>
+                    </div>
+                    <div class="col-xs-6">
+                          <br><a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
+                    </div>
+                </div>
+        </div>
+    </div>
+</div>

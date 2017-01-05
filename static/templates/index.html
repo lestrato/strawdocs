@@ -1,6 +1,4 @@
 {% extends "base.html" %}
-{% load number_new %}
-{% load str_to_int %}
 {% block content %}
 <h2 class="page-header clearfix">
     <div class="pull-left">
@@ -18,49 +16,19 @@
 <!-- <h4>
     You're not participating in any documents yet...
 </h4> -->
-<h3>Documents You Manage</h3>
+<h3>Documents You Manage <div>({{ documents_managed.count }})</div></h3>
 <div class="container-fluid">
     {% for document in documents_managed %}
-        <div class="col-sm-12 col-xs-18">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <div class="container-fluid">
-                        <h4 style="align-items: center;">
-                            <div class="row-fluid"><a href="./doc/{{ document.slug }}">{{document.title}}</a></div>
-                            <div class="row-fluid">
-                                <small>{{ document|number_new:user }} unread answer{% if document|number_new:user|str_to_int != 1 %}s{% endif %}</small>
-                                <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                            </div>
-                        </h4>
-                    </div>
-                </div>
-            </div>
-        </div>
+        {% include "document_section.html" with document=document %}
     {% empty %}
       <h4>you're not managing any documents...</h4>
     {% endfor %}
 </div>
 <hr>
-<h3>Your Starred Documents</h3>
+<h3>Your Starred Documents <div>({{ user_document_followings.count }})</div></h3>
 <div class="container-fluid">
   {% for following in user_document_followings %}
-    {% with following.document as document %}
-      <div class="col-sm-12 col-xs-18">
-          <div class="panel panel-default">
-              <div class="panel-body">
-                  <div class="container-fluid">
-                      <h4 style="align-items: center;">
-                          <div class="row-fluid"><a href="./doc/{{ document.slug }}">{{document.title}}</a></div>
-                          <div class="row-fluid">
-                              <small>{{ document|number_new:user }} unread answer{% if document|number_new:user|str_to_int != 1 %}s{% endif %}</small>
-                              <a class="btn btn-default btn-xs pull-right" href="path/to/settings" aria-label="Settings"><i class="fa fa-cog" aria-hidden="true"></i></a>
-                          </div>
-                      </h4>
-                  </div>
-              </div>
-          </div>
-      </div>
-    {% endwith %}
+    {% include "document_section.html" with document=following.document %}
   {% empty %}
     <h4>you haven't starred any documents...</h4>
   {% endfor %}

@@ -4,12 +4,26 @@ BASE
 
 /* General */
 @font-face {
-    font-family: fin;
-    src: url('./Fins-Regular.otf');
+    font-family: ubuntu;
+    src: url('./Ubuntu-R.ttf');
+}
+
+@font-face {
+    font-family: ubuntu-l;
+    src: url('./Ubuntu-L.ttf');
 }
 
 h1 {
   font-size: 48px;
+}
+
+h3 {
+  font-family: ubuntu;
+}
+
+h3 > div {
+  display: inline;
+  color: #777777;
 }
 
 html,body{
@@ -17,7 +31,7 @@ html,body{
 }
 
 body  {
-  font-family: Arial;
+  font-family: ubuntu-l;
 }
 
 a {
@@ -27,6 +41,7 @@ a {
 
 .page-header {
     border-bottom: 1px solid #ddd;
+    font-family: ubuntu;
 }
 
 .modal-dialog {
@@ -85,6 +100,7 @@ a {
 
 #header {
   margin-top: 0px;
+  font-family: ubuntu;
 }
 
 #header a {
@@ -135,6 +151,9 @@ Document
     border-bottom-right-radius: 0;
 }
 
+.rich-text {
+  font-family: Arial;
+}
 /*****************
 Team
 *****************/
