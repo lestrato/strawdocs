@@ -243,25 +243,9 @@ class QuestionView(BaseView):
         question.hits += 1
         question.save()
 
-        # update the user's last visit time
-        try:
-            last_visit = UserQuestionLastVisit.objects.get(
-                question=question,
-                visitor=request.user,
-            )
-            last_visit.created_on = timezone.now()
-            last_visit.save()
-        except UserQuestionLastVisit.DoesNotExist:
-            # first time visiting the question, create a new visit instance
-            new_visit = UserQuestionLastVisit(
-                question = question,
-                visitor = request.user,
-            )
-            new_visit.save()
-
         # get sortby filter
         sortby = request.GET.get('sortby', False)
-        if sortby and sortby == 'active' or sortby == 'votes' or sortby == 'oldest':
+        if sortby and sortby == 'active' or sortby == 'votes' or sortby == 'newest':
             if request.GET['sortby'] == 'active':
                 answers = Answer.objects.filter(
                     question=question,
@@ -274,30 +258,48 @@ class QuestionView(BaseView):
                 ).annotate(
                     net_votes=(Count('upvotes')-Count('downvotes')),
                 ).order_by('-net_votes')
-            elif request.GET['sortby'] == 'oldest':
+            elif request.GET['sortby'] == 'newest':
                 answers = Answer.objects.filter(
                     question=question,
-                ).order_by('created_on')
+                ).order_by('-created_on')
         else:
             answers = Answer.objects.filter(
                 question=question,
-            ).order_by('-created_on')
+            ).order_by('created_on')
 
-        # pass
+        if not request.user.is_anonymous():
+            # update the user's last visit time
+            try:
+                last_visit = UserQuestionLastVisit.objects.get(
+                    question=question,
+                    visitor=request.user,
+                )
+                last_visit.created_on = timezone.now()
+                last_visit.save()
+            except UserQuestionLastVisit.DoesNotExist:
+                # first time visiting the question, create a new visit instance
+                new_visit = UserQuestionLastVisit(
+                    question = question,
+                    visitor = request.user,
+                )
+                new_visit.save()
+
         ACForm = AnswerCreationForm()
         PCForm = PostCreationForm()
+
+        template_items['ACForm'] = ACForm
+        template_items['PCForm'] = PCForm
 
         template_items['document'] = document
         template_items['document_url'] = '/doc/' + document.slug
         template_items['question'] = question
         template_items['answers'] = answers
-        template_items['ACForm'] = ACForm
-        template_items['PCForm'] = PCForm
         return render(request, 'question.html', template_items)
 
     def post_fetch(self, request, **kwargs):
-        print request.POST
-        pass
+        if request.user.is_anonymous():
+            return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
+            
         doc_slug = kwargs.get('doc_slug', None)
         question_url = kwargs.get('question_url', None)
         question_title = question_url.replace ("_", " ")

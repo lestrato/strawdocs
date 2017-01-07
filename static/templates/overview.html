@@ -86,7 +86,7 @@
           <div class="row-fluid">
             <div class="pull-left">
               <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.answer_set.all.count }} answer{% if question.answer_set.all.count != 1%}s{% endif %}
-                <em style="color:black">({{question|number_new:user}} new)</em>
+                {% if not user.is_anonymous %}<em style="color:black">({{question|number_new:user}} new)</em>{% endif %}
               </a>
             </div>
             <div class="pull-right">
@@ -101,6 +101,8 @@
           </div>
         </div>
       </div>
+    {% empty %}
+      <div class="container-fluid"><h4>this document has no questions...</h4></div>
     {% endfor %}
 </div>
 
@@ -108,7 +110,7 @@
 <hr>
 
 <center>
-    <div id="btn-add" onclick="showComment(this)" class="btn btn-lg btn-default add-comment">Add another question</div>
+    <div id="btn-add" onclick="showComment(this)" class="btn btn-lg btn-default add-comment">Add a question</div>
     <div class="hidden-comment" style="display: none;">
         <form method="POST" id="form-create-question">{% csrf_token %}
             <div class="panel panel-default box-shadow" style="margin-bottom: 10px;">

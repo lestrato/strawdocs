@@ -47,5 +47,7 @@ def format_activity_date(last_post):
         formatted_string += str(td_seconds) + " seconds ago"
     elif td_seconds == 1:
         formatted_string += str(td_seconds) + " second ago"
-
+    elif td_seconds == 0:
+        formatted_string += " just now"
+        
     return formatted_string

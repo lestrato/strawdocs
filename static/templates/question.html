@@ -23,7 +23,11 @@
           {% endfor %}
 
           <input class="slug" type="hidden" value='{{ question.slug }}'>
-          <a class='add-comment'>add a comment</a>
+          {% if not user.is_anonymous %}
+            <a class='add-comment'>add a comment</a>
+          {% else %}
+            <div><a href="#login" data-toggle="modal">log in</a> to reply</div>
+          {% endif %}
         </div>
       </div>
 
@@ -32,7 +36,7 @@
           <a href="#" data-toggle="dropdown" class="dropdown-toggle">Sort by <b class="caret"></b></a>
           <ul class="dropdown-menu">
             <li><a href="?sortby=active#answers"><i class="fa fa-comments-o fa-fw"></i> Active</a></li>
-            <li><a href="?sortby=oldest#answers"><i class="fa fa-clock-o fa-fw"></i> Oldest</a></li>
+            <li><a href="?sortby=newest#answers"><i class="fa fa-clock-o fa-fw"></i> Newest</a></li>
             <li><a href="?sortby=votes#answers"><i class="fa fa-thumbs-o-up fa-fw"></i> Votes</a></li>
           </ul>
         </div>
@@ -54,7 +58,11 @@
                 {% endfor %}
 
                 <input class="slug" type="hidden" value='{{ answer.slug }}'>
-                <a class='add-comment'>add a comment</a>
+                {% if not user.is_anonymous %}
+                  <a class='add-comment'>add a comment</a>
+                {% else %}
+                  <div><a href="#login" data-toggle="modal">log in</a> to reply</div>
+                {% endif %}
               </div>
             </div>
             <hr class="dark">
@@ -65,61 +73,84 @@
           {% endfor %}
       </div>
     </div>
+
+    {% if not user.is_anonymous %}
       <div class="row-fluid">
         <h4>Add an answer</h4>
       </div>
-
-      <div id="your_answer">
-          <form method="POST" id="create-answer-form">{% csrf_token %}
-          <div class="row-fluid">
-                {{ACForm.content}}
-          </div>
-          <div class="row-fluid">
-            <input type="hidden" name="createAnswerSubmit">
-            <button onclick="removeRequired()" type="submit" class="btn btn-primary pull-right" style="margin-top: 10px;">Post your answer</button>
-          </div>
-          </form>
+    {% else %}
+      <div class="row-fluid">
+        <h4><a href="#login" data-toggle="modal">log in</a> to answer</h4>
       </div>
-      <!-- Report Modal HTML -->
-      <div id="report-modal" class="modal fade">
-        <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
-            <div class="modal-content">
-              <div class="modal-body">
-                  <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                  <div class="container-fluid">
+    {% endif %}
 
-                      <h3 class="modal-title">Report this post</h3>
-                      <hr>
-                      Select the reason(s) you found to report this post:
-                      <div class="checkbox">
-                        <label><input type="checkbox" value="">Inappropriate imagery</label>
-                      </div>
-                      <div class="checkbox">
-                        <label><input type="checkbox" value="">URL shortener</label>
-                      </div>
-                      <div class="checkbox">
-                        <label><input type="checkbox" value="">Spam</label>
-                      </div>
-                      <div class="checkbox">
-                        <label><input type="checkbox" value="">Harassment, hate speech, or verbal abuse</label>
-                      </div>
-                  </div>
-              <hr>
-              <div class="row-fluid clearfix">
-                  <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                  <button type="button" class="btn btn-danger pull-right"><i class="fa fa-flag fa-fw"></i> Report</button>
-              </div>
+    <div id="your_answer">
+        <form method="POST" id="create-answer-form">{% csrf_token %}
+        <div class="row-fluid">
+              {{ACForm.content}}
+        </div>
+        <div class="row-fluid">
+          <input type="hidden" name="createAnswerSubmit">
+          <button onclick="removeRequired()" type="submit" class="btn btn-primary pull-right {% if user.is_anonymous %}disabled{% endif %}" style="margin-top: 10px;">Post your answer</button>
+        </div>
+        </form>
+      </div>
+    <!-- Report Modal HTML -->
+    <div id="report-modal" class="modal fade">
+      <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+          <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="container-fluid">
+
+                    <h3 class="modal-title">Report this post</h3>
+                    <hr>
+                    Select the reason(s) you found to report this post:
+                    <div class="checkbox">
+                      <label><input type="checkbox" value="">Inappropriate imagery</label>
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" value="">URL shortener</label>
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" value="">Spam</label>
+                    </div>
+                    <div class="checkbox">
+                      <label><input type="checkbox" value="">Harassment, hate speech, or verbal abuse</label>
+                    </div>
+                </div>
+            <hr>
+            <div class="row-fluid clearfix">
+                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-danger pull-right"><i class="fa fa-flag fa-fw"></i> Report</button>
             </div>
-
           </div>
+
         </div>
       </div>
+    </div>
 
 {% endblock %}
 
 {% block scripts %}
 <script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script>
+<script type="text/javascript">
+  tinymce.init({
+    {% if user.is_anonymous %}readonly : 1,{% endif %}
+    selector: 'textarea',
+    height: 100,
+    theme: 'modern',
+    removed_menuitems: 'newdocument',
+    plugins: [
+      'advlist autolink lists link image charmap preview hr',
+      'searchreplace code eqneditor',
+      'insertdatetime save table directionality',
+      'paste textpattern imagetools'
+    ],
+    toolbar1: 'bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image eqneditor',
+  });
+</script>
+<!-- <script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script> -->
 <script type="text/javascript" src="{% static "js/show-all-comments.js" %}"></script>
 <script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
 <script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
@@ -202,7 +233,11 @@
   $(document).on('submit', '#create-answer-form', function(event) {
       // AJAX for submitting answers
       event.preventDefault();
-      ajax_post($(this), "#answers", "#answers", 'tinymce');
+      {% if user.is_anonymous %}
+        $("#login").modal("show");
+      {% else %}
+        ajax_post($(this), "#answers", "#answers", 'tinymce');
+      {% endif %}
   });
 
   $(document).on('click', ".createReplyForm", function(event){
@@ -222,7 +257,11 @@
   $(document).on('submit', ".vote-submit", function(event) {
     // AJAX for submitting upvotes/downvotes
     event.preventDefault();
-    ajax_post($(this), $(this).closest('.btn-group-xs'), ".btn-group-xs", 'None');
+    {% if user.is_anonymous %}
+      $("#login").modal("show");
+    {% else %}
+      ajax_post($(this), $(this).closest('.btn-group-xs'), ".btn-group-xs", 'None');
+    {% endif %}
   });
 </script>
 <script type="text/javascript">
