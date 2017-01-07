@@ -184,6 +184,8 @@ class DocumentOverview(BaseView):
                 new_following.save()
 
         # check if user is the document creator
+        print request.POST
+        pass
         if request.user == document.created_by:
             if 'createQuestionSubmit' in request.POST:
                 question = {}
@@ -202,6 +204,19 @@ class DocumentOverview(BaseView):
                         document=document,
                     )
                     new_question.save()
+
+            if 'deleteQuestionSubmit' in request.POST:
+                # get question based on slug
+                try:
+                    question = Question.objects.get(
+                        document=document,
+                        slug=request.POST.get('deleteQuestionSubmit', None),
+                    )
+                    question.delete()
+                except Question.DoesNotExist:
+                    # redirect to page not found, temporarily the home page
+                    pass
+
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -282,7 +297,7 @@ class QuestionView(BaseView):
 
     def post_fetch(self, request, **kwargs):
         print request.POST
-        # pass
+        pass
         doc_slug = kwargs.get('doc_slug', None)
         question_url = kwargs.get('question_url', None)
         question_title = question_url.replace ("_", " ")

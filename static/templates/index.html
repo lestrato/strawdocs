@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block content %}
 <h2 class="page-header clearfix">
     <div class="pull-left">
@@ -39,29 +40,6 @@
 </div>
 </div>
 
-<!--  Document Unmanage HTML -->
-<div id="docUnmanage" class="modal fade">
-    <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <div class="container-fluid">
-                    <h3 class="modal-title">Unmanage Document</h3>
-                    <hr>
-                    <h4> Are you sure you want to <div style="display: inline; color: #8a6d3b">revoke your own</div> permissions to edit and moderate this document?</h4>
-                    <div class="alert alert-warning"> You are the only one managing this document. By leaving no one in charge, questions cannot be created and new posts will remain unmoderated.</div>
-                    <hr>
-                    <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-                    <form method="post" style="display: inline">{% csrf_token %}
-                    <input class="doc-slug" name="doc_slug" type="hidden">
-                    <button type="button" class="btn btn-warning pull-right">Unmanage</button>
-                    </form>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <!--  Document Delete HTML -->
 <div id="docDelete" class="modal fade">
     <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
@@ -76,7 +54,7 @@
                     <hr>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <form method="post" style="display: inline">{% csrf_token %}
-                    <input class="doc-slug" name="doc_slug" type="hidden">
+                    <input id="doc-slug" name="doc_slug" type="hidden">
                     <button name="deleteDocumentSubmit" type="submit" class="btn btn-danger pull-right">Delete</button>
                     </form>
                 </div>
@@ -87,36 +65,20 @@
 {% endblock %}
 
 {% block scripts %}
+<script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
 <script type="text/javascript">
     function doc_settings(title, slug) {
       // inject the title into the form
-      $(".doc-name").text(title);
+      $("#doc-name").text(title);
       // inject the slug into the form
-      $(".doc-slug").val(slug);
+      $("#doc-slug").val(slug);
     }
 </script>
-
 <script type="text/javascript">
     // AJAX for unfavouriting
-  $('.change-favourite-form').submit(function(e) { // catch the form's submit event
-      e.preventDefault();
-      var self = $(this); //<-- Set up here.
-      $.ajax({
-          data: $(this).serialize(), // get the form data
-          type: $(this).attr('method'), // GET or POST
-          url: $(this).attr('action'), // the file to call
-          // handle a successful response
-          success : function(response) {
-              $("#your-starred-documents").replaceWith($(response).find("#your-starred-documents"));
-          },
-          // handle a non-successful response
-          error : function(xhr,errmsg,err) {
-              $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                  " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-              console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
-          }
-      });
-  });
+    $(document).on('submit', '.change-favourite-form', function(event) {
+      event.preventDefault();
+      ajax_post($(this), "#your-starred-documents", "#your-starred-documents", 'None');
+    });
 </script>
-
 {% endblock %}

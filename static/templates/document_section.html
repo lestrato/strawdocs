@@ -16,7 +16,6 @@
                               <a class="btn btn-default btn-xs" data-toggle="dropdown" class="dropdown-toggle"><i class="fa fa-cog" aria-hidden="true"></i></a>
                               <ul class="dropdown-menu">
                                  {% if doc_type == "managed" %}
-                                 <li><a onclick="doc_settings('{{document.title}}', '{{document.slug}}')" href="#docUnmanage" data-toggle="modal"><i class="fa fa-user-times fa-fw"></i> Unmanage</a></li>
                                  <li><a onclick="doc_settings('{{document.title}}', '{{document.slug}}')" href="#docDelete" data-toggle="modal"><i class="fa fa-trash fa-fw"></i> Delete</a></li>
                                  {% else %}
                                  <li>
