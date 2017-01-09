@@ -19,6 +19,7 @@ from django.contrib import admin
 from document.views import *
 from basesite.views import *
 from information.views import *
+from account.views import *
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -33,8 +34,12 @@ urlpatterns = [
     url(r'^team/$', Team.as_view()),
     url(r'^support/$', Support.as_view()),
 
-    # only if logged in
+    # document creation
     url(r'^create/$', CreateDocument.as_view()),
+
+    # account settings
+    url(r'^account/$', Settings.as_view()),
+    url(r'^account/recovery/$', Recovery.as_view()),
 
     # misc
     url(r'^logout/$', logout_page),

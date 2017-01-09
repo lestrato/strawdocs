@@ -40,6 +40,8 @@ INSTALLED_APPS = [
     'document',
     'information',
     'basesite',
+    'account',
+
     'randomslugfield',
     'simplemde',
     'markdown_deux',

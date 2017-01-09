@@ -59,11 +59,11 @@
 
                                               <div class="row-fluid clearfix" style="margin-top: 10px;">
                                                   <div class="pull-left">
-                                                      <a onclick="$('#login').modal('hide'); $('#signup').modal('show');">sign up</a>
+                                                      <small><a onclick="$('#login').modal('hide'); $('#signup').modal('show');">sign up</a></small>
                                                   </div>
 
                                                   <div class="pull-right">
-                                                      <a href="">reset password</a>
+                                                      <small><a href="">reset password</a></small>
                                                   </div>
                                               </div>
                                               <hr class="thin">
@@ -92,8 +92,13 @@
                                               <div style="margin-bottom: 10px;">{{ SUForm.password2 }}</div>
                                               <div>{{ SUForm.email }}</div>
                                               <hr>
-                                              <div class="text-right">
-                                                  <button type="submit" class="btn btn-primary" name="SignUpFormSubmit">Sign up</button>
+                                              <div class="row-fluid clearfix">
+                                                  <div class="pull-left" style="margin-top: 5px;">
+                                                      <small><a onclick="$('#signup').modal('hide'); $('#login').modal('show');">log in instead</a></small>
+                                                  </div>
+                                                  <div class="pull-right">
+                                                      <button type="submit" class="btn btn-primary" name="SignUpFormSubmit">Sign up</button>
+                                                  </div>
                                               </div>
                                           </form>
                                       </div>

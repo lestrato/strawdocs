@@ -35,6 +35,7 @@ class QuestionCreationForm(forms.Form):
     )
 class PostCreationForm(forms.Form):
     content = forms.CharField(
+        required=False,
         widget=forms.Textarea(
             attrs={
                 'class': 'form-control',
