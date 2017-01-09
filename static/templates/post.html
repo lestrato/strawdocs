@@ -1,9 +1,10 @@
 {% load format_date %}
 {% load vote_status %}
 {% load tz %}
+{% load markdown_deux_tags %}
 
 <div class="rich-text">
-{{ post.content|safe }}
+{{ post.content|markdown }}
 </div>
 <div class="row-fluid clearfix parent-post-footer">
   <div class="pull-left">

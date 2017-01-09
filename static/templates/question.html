@@ -5,7 +5,7 @@
 {% load tz %}
 
 {% block content %}
-      <h2 class="page-header">[<a href="{{document_url}}">{{document.title}}</a>] {{ question.title }}</h2>
+    <h2 class="page-header">[<a href="{{document_url}}">{{document.title}}</a>] {{ question.title }}</h2>
     <div id="posts">
       <div class="row">
         <div class="parent-post col-lg-36">
@@ -87,7 +87,7 @@
     <div id="your_answer">
         <form method="POST" id="create-answer-form">{% csrf_token %}
         <div class="row-fluid">
-              {{ACForm.content}}
+          <div class="editor">{{ PCForm.content }}</div>
         </div>
         <div class="row-fluid">
           <input type="hidden" name="createAnswerSubmit">
@@ -133,32 +133,26 @@
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script type="text/javascript">
-  tinymce.init({
-    {% if user.is_anonymous %}readonly : 1,{% endif %}
-    selector: 'textarea',
-    height: 100,
-    theme: 'modern',
-    removed_menuitems: 'newdocument',
-    plugins: [
-      'advlist autolink lists link image charmap preview hr',
-      'searchreplace code eqneditor',
-      'insertdatetime save table directionality',
-      'paste textpattern imagetools'
-    ],
-    toolbar1: 'bold italic | alignleft aligncenter alignright alignjustify | bullist numlist | outdent indent | link image eqneditor',
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
+
+<script>
+  questionmde = new SimpleMDE({
+    element: document.getElementById("create-question-editor"),
+    spellChecker: false,
+    status: false,
   });
 </script>
-<!-- <script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script> -->
-<script type="text/javascript" src="{% static "js/show-all-comments.js" %}"></script>
-<script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
-<script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
 
 <script type="text/javascript">
   var questionTotal = 1;
 
-  function create_tinymce(post_type, slug) {
+  function create_simplemde(self, post_type) {
+    questionTotal += 1;
+    textareaId = "mceId"+questionTotal;
+    slug = $(self).siblings('.slug').val();
+
     if (post_type == 'reply') {
       cancel_btn_name = 'btn-cancel-reply';
       submit_btn_name = 'createReplySubmit';
@@ -169,90 +163,107 @@
       form_name = 'editPostForm';
     }
 
-    new_tinymce = '<div class="reply-content row-fluid">'+
-    "<form method='POST' style='display: inline' class="+form_name+">{% csrf_token %}" +
-    '<textarea name="content" id="'+textareaId+'"></textarea>'+
+    new_simplemde = '<div class="reply-content row-fluid">'+
+    "<form class="+form_name+" method='POST' style='display: inline'>{% csrf_token %}" +
+    '<div class="editor"><textarea name="content" id="'+textareaId+'"></textarea></div>'+
     '<div class="row-fluid clearfix">'+
     '<button type=button class="btn btn-sm btn-default ' + cancel_btn_name +' pull-left" style="margin-top: 10px;">'+
     'Cancel'+
     '</button>'+
     '<input type="hidden" name='+submit_btn_name+' value='+slug+'>' +
-    '<button onclick="removeRequired();" type="submit" class="btn btn-sm btn-success pull-right" style="margin-top: 10px;">'+
+    '<button type="submit" class="btn btn-sm btn-success pull-right" style="margin-top: 10px;">'+
     'Save changes'+
     '</button>'+
     '</div>'+
     '</form>' +
     '</div>';
 
-    return new_tinymce
+    if (post_type == 'reply') {
+      var hideable_content = $(self).closest('.replies');
+      $(hideable_content).append(new_simplemde);
+      $(self).hide();
+    } else {
+      var hideable_content = $(self).closest('.editable-comment');
+      $(hideable_content).after(new_simplemde);
+      $(hideable_content).hide();
+    }
+
+    var simplemde = new SimpleMDE ({
+        element: document.getElementById(textareaId),
+        spellChecker: false,
+        status: false,
+    });
+
+    if (post_type != 'reply') {
+      simplemde.value($(self).closest('.parent-post').find('.rich-text').html());
+    }
+
+    ///////////////////
+    $(document).on('submit', ".editPostForm", function(event){
+      // AJAX for submitting replies
+      event.preventDefault();
+      textarea =  $(this).find('textarea'); // get the textarea for this form
+      $(textarea).val(simplemde.value()); // get the value of this simplemde and set the textarea to this value
+      ajax_post($(this), "#posts", "#posts"); // send the post request
+      $(textarea).val(''); // reset the textarea value
+      simplemde.value(''); // reset the simplemde value
+    });
+
+    $(document).on('submit', ".createReplyForm", function(event){
+      event.preventDefault();
+      textarea =  $(this).find('textarea'); // get the textarea for this form
+      $(textarea).val(simplemde.value()); // get the value of this simplemde and set the textarea to this value
+      ajax_post($(this), "#posts", "#posts"); // send the post request
+      $(textarea).val(''); // reset the textarea value
+      simplemde.value(''); // reset the simplemde value
+    });
+
   }
 
   /* FOR QUESTION AND ANSWER EDITING */
   $(document).on('click', '.edit-comment', function(e) {
-      questionTotal += 1;
-      textareaId = "mceId"+questionTotal;
-      slug = $(this).siblings('.slug').val()
-      closest_editable =  $(this).closest('.editable-comment');
-      $(closest_editable).after(create_tinymce('non-reply', slug));
-
-      tinymce.EditorManager.execCommand('mceAddEditor', true, textareaId);
-      // populate it with existing content
-      tinyMCE.get( textareaId).setContent($(closest_editable).find('.rich-text').html());
-      $(closest_editable).hide();
-
-  });
-
-  $(document).on('click', '.btn-cancel-edit', function(e) {
-    $(this).closest('.parent-post').find('.editable-comment').show();
-
-    tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.parent-post').find('textarea').attr('id'));
-    $(this).closest('.reply-content').remove();
+      $(this).closest('.editable-comment').after(create_simplemde(this, 'non-reply'));
   });
 
   /* FOR REPLIES */
   $(document).on('click', '.add-comment', function(e) {
-      questionTotal += 1;
-      textareaId = "mceId"+questionTotal;
-      slug = $(this).siblings('.slug').val()
-      // add new blank reply
-      $(this).closest('.replies').append(create_tinymce('reply', slug));
-
-      tinymce.EditorManager.execCommand('mceAddEditor', true, textareaId);
-      $(this).hide();
-
+    $(this).closest('.editable-comment').after(create_simplemde(this, 'reply'));
   });
 
   $(document).on('click', '.btn-cancel-reply', function(e) {
     $(this).closest('.replies').find('.add-comment').show();
-
-    tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.reply-content').find('textarea').attr('id'));
     $(this).closest('.reply-content').remove();
   });
+  $(document).on('click', '.btn-cancel-edit', function(e) {
+    $(this).closest('.parent-post').find('.editable-comment').show();
+    $(this).closest('.reply-content').remove();
+  });
+
 </script>
+
+
 <script type="text/javascript">
+
+  answermde = new SimpleMDE({
+    element: document.getElementById("create-post-editor"),
+    spellChecker: false,
+    status: false,
+  });
+
   $(document).on('submit', '#create-answer-form', function(event) {
       // AJAX for submitting answers
       event.preventDefault();
       {% if user.is_anonymous %}
         $("#login").modal("show");
       {% else %}
-        ajax_post($(this), "#answers", "#answers", 'tinymce');
+        textarea =  $(this).find('textarea'); // get the textarea for this form
+        $(textarea).val(answermde.value()); // get the value of this simplemde and set the textarea to this value
+        ajax_post($(this), "#answers", "#answers"); // send the post request
+        $(textarea).val(''); // reset the textarea value
+        answermde.value(''); // reset the simplemde value
       {% endif %}
   });
 
-  $(document).on('click', ".createReplyForm", function(event){
-    // AJAX for submitting replies
-    event.preventDefault();
-    form = $(this).closest('form');
-    ajax_post(form, "#posts", "#posts", "tinymce");
-  });
-
-  $(document).on('click', ".editPostForm", function(event){
-    // AJAX for submitting replies
-    event.preventDefault();
-    form = $(this).closest('form');
-    ajax_post(form, "#posts", "#posts", "tinymce");
-  });
 
   $(document).on('submit', ".vote-submit", function(event) {
     // AJAX for submitting upvotes/downvotes
@@ -260,10 +271,11 @@
     {% if user.is_anonymous %}
       $("#login").modal("show");
     {% else %}
-      ajax_post($(this), $(this).closest('.btn-group-xs'), ".btn-group-xs", 'None');
+      ajax_post($(this), $(this).closest('.btn-group-xs'), ".btn-group-xs");
     {% endif %}
   });
 </script>
+
 <script type="text/javascript">
   $( ".replies" ).each(function() {
     if ($(this).children(".row-fluid").length > 5) {

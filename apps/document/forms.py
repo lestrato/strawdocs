@@ -1,5 +1,4 @@
 from django import forms
-from tinymce.widgets import TinyMCE
 
 class DocumentCreationForm(forms.Form):
     d_title = forms.CharField(
@@ -21,30 +20,25 @@ class QuestionCreationForm(forms.Form):
                 'required':'True',
                 'class': 'form-control question-title-input',
                 'placeholder':'Question Title',
-                'maxlength':'40',
+                'maxlength':'30',
             }
         )
     )
     content = forms.CharField(
-        widget=TinyMCE(
+        required=False,
+        widget=forms.Textarea(
             attrs={
-                'required':'False',
-            }
-        )
-    )
-class AnswerCreationForm(forms.Form):
-    content = forms.CharField(
-        widget=TinyMCE(
-            attrs={
-                'required':'False',
+                'class': 'form-control',
+                'id': 'create-question-editor',
             }
         )
     )
 class PostCreationForm(forms.Form):
     content = forms.CharField(
-        widget=TinyMCE(
+        widget=forms.Textarea(
             attrs={
-                'required':'False',
+                'class': 'form-control',
+                'id': 'create-post-editor',
             }
         )
     )

@@ -389,6 +389,38 @@ hr.thin {
 
 }
 
+
+/*****************
+Simple--MDE
+*****************/
+.editor > .editor-toolbar {
+  border-top-left-radius: inherit;
+  border-top-right-radius: inherit;
+}
+
+.editor > .CodeMirror {
+  border-bottom-left-radius: inherit;
+  border-bottom-right-radius: inherit;
+  min-height: 100px;
+}
+
+.editor .CodeMirror-scroll {
+  min-height: 100px;
+}
+
+.hidden-comment .editor-toolbar,
+.hidden-comment .CodeMirror,
+#question-group .editor-toolbar,
+#question-group .CodeMirror
+{
+  border: inherit;
+}
+
+.hidden-comment .CodeMirror,
+#question-group .CodeMirror
+{
+  border-top: 1px solid #ddd;
+}
 /*****************
 Tiny-MCE
 *****************/

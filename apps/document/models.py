@@ -7,7 +7,7 @@ from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
 
 from randomslugfield import RandomSlugField
-from tinymce import models as tinymce_models
+from simplemde.fields import SimpleMDEField
 
 class Document(models.Model):
     ''' Every document has:
@@ -46,12 +46,27 @@ class Document(models.Model):
 class Post(models.Model):
     ''' Every post has:
     - a slugfield
+    - content
+    - a datetime it was created on
+    - a user it was created by
     '''
     slug = RandomSlugField(
         length=8,
         blank=False,
         unique=True,
     )
+    content = SimpleMDEField(
+        blank=False,
+    )
+    created_on = models.DateTimeField(
+        auto_now_add=True,
+        blank=False,
+    )
+    created_by = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False
+    )
+
     class Meta:
         abstract = True
 
@@ -82,25 +97,11 @@ class Downvote(Vote):
         return self.content_object.slug
 
 class Reply(Post):
-    ''' Every reply has:
-    - a reply content
-    - a datetime it was created on
-    - a user it was created by
+    ''' Every reply is a Post and also has:
     - a number of upvotes
     < a question/answer/reply it addresses
     > a set of replies
     '''
-    content = tinymce_models.HTMLField(
-        blank=False,
-    )
-    created_on = models.DateTimeField(
-        auto_now_add=True,
-        blank=False,
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=False
-    )
     #  generic foreign key to either a question/answer/reply
     content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
     object_id = models.PositiveIntegerField()
@@ -113,11 +114,8 @@ class Reply(Post):
         return self.content_object.slug
 
 class Question(Post):
-    ''' Every question has:
+    ''' Every question is a Post and also has:
     - a title
-    - a question content
-    - a datetime it was created on
-    - a user it was created by
     - a number of upvotes
     - a number of downvotes
     < a document it belongs to
@@ -126,17 +124,6 @@ class Question(Post):
     title = models.CharField(
         max_length=30,
         blank=False,
-    )
-    content = tinymce_models.HTMLField(
-        blank=False,
-    )
-    created_on = models.DateTimeField(
-        auto_now_add=True,
-        blank=False,
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=False
     )
     document = models.ForeignKey(
         'Document',
@@ -157,26 +144,12 @@ class Question(Post):
         return self.title
 
 class Answer(Post):
-    ''' Every answer has:
-    - an answer content
-    - a datetime it was created on
-    - a user it was created by
+    ''' Every answer is a Post and also has:
     - a number of upvotes
     - a number of downvotes
     < a question it belongs to
     > a set of replies
     '''
-    content = tinymce_models.HTMLField(
-        blank=False,
-    )
-    created_on = models.DateTimeField(
-        auto_now_add=True,
-        blank=False,
-    )
-    created_by = models.ForeignKey(
-        settings.AUTH_USER_MODEL,
-        blank=False
-    )
     question = models.ForeignKey(
         'Question',
         on_delete=models.CASCADE,

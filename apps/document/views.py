@@ -105,7 +105,7 @@ class CreateDocument(BaseView):
                 curr_question['q_title'] = pair[0]
                 if not pair[1]:
                     # if the user left the content field blank, then just populate it with a status message
-                    curr_question['content'] = '<p>there isn\'t anything here yet.</p>'
+                    curr_question['content'] = 'there isn\'t anything here yet.'
                 else:
                     curr_question['content'] = pair[1]
                 to_clean_questions.append(curr_question)
@@ -184,14 +184,12 @@ class DocumentOverview(BaseView):
                 new_following.save()
 
         # check if user is the document creator
-        print request.POST
-        pass
         if request.user == document.created_by:
             if 'createQuestionSubmit' in request.POST:
                 question = {}
                 question['q_title'] = request.POST['q_title']
                 if not request.POST['content']:
-                    question['content'] = '<p>there isn\'t anything here yet.</p>'
+                    question['content'] = 'there isn\'t anything here yet.'
                 else:
                     question['content'] = request.POST['content']
                 QCForm = QuestionCreationForm(question)
@@ -284,10 +282,8 @@ class QuestionView(BaseView):
                 )
                 new_visit.save()
 
-        ACForm = AnswerCreationForm()
         PCForm = PostCreationForm()
 
-        template_items['ACForm'] = ACForm
         template_items['PCForm'] = PCForm
 
         template_items['document'] = document
@@ -299,7 +295,7 @@ class QuestionView(BaseView):
     def post_fetch(self, request, **kwargs):
         if request.user.is_anonymous():
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-            
+
         doc_slug = kwargs.get('doc_slug', None)
         question_url = kwargs.get('question_url', None)
         question_title = question_url.replace ("_", " ")
@@ -318,20 +314,18 @@ class QuestionView(BaseView):
             return HttpResponseRedirect('/404')
 
         if 'createAnswerSubmit' in request.POST:
-            ACForm = AnswerCreationForm(request.POST)
-            if ACForm.is_valid():
+            PCForm = PostCreationForm(request.POST)
+            if PCForm.is_valid():
                 # create new answer
                 new_answer = Answer(
-                    content=ACForm.cleaned_data['content'],
+                    content=PCForm.cleaned_data['content'],
                     created_by=request.user,
                     question=question,
                 )
                 new_answer.save()
 
         if 'createReplySubmit' in request.POST:
-            reply = {}
-            reply['content'] = request.POST['content']
-            PCForm = PostCreationForm(reply)
+            PCForm = PostCreationForm(request.POST)
             if PCForm.is_valid():
                 # fetch the question or answer object based on the thread_slug
                 thread_slug = request.POST["createReplySubmit"]
@@ -434,6 +428,8 @@ class QuestionView(BaseView):
 
         if 'editPostSubmit' in request.POST:
             # fetch post by slug
+            print request.POST
+            pass
             try:
                 old_post = Question.objects.get(slug=request.POST['editPostSubmit'])
             except Question.DoesNotExist:
@@ -444,9 +440,7 @@ class QuestionView(BaseView):
 
             # check to make sure user is the one who created it
             if request.user == old_post.created_by:
-                post = {}
-                post['content'] = request.POST['content']
-                PCForm = PostCreationForm(post)
+                PCForm = PostCreationForm(request.POST)
                 if PCForm.is_valid():
                     # now change the content
                     old_post.content = PCForm.cleaned_data['content']

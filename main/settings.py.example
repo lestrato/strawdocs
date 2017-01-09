@@ -41,7 +41,8 @@ INSTALLED_APPS = [
     'information',
     'basesite',
     'randomslugfield',
-    'tinymce',
+    'simplemde',
+    'markdown_deux',
 ]
 
 MIDDLEWARE = [

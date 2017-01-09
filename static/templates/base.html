@@ -57,10 +57,16 @@
 
                                               <div>{{ LIForm.password }}</div>
 
-                                              <div class="text-right">
-                                                  <a href="">reset password</a>
+                                              <div class="row-fluid clearfix" style="margin-top: 10px;">
+                                                  <div class="pull-left">
+                                                      <a onclick="$('#login').modal('hide'); $('#signup').modal('show');">sign up</a>
+                                                  </div>
+
+                                                  <div class="pull-right">
+                                                      <a href="">reset password</a>
+                                                  </div>
                                               </div>
-                                              <hr>
+                                              <hr class="thin">
                                               <div class="text-right">
                                                   <button type="submit" class="btn btn-primary" name="LogInFormSubmit">Log in</button>
                                               </div>

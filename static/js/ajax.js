@@ -1,7 +1,6 @@
-function ajax_post(form, old_dom, new_dom, type_saved){
+function ajax_post(form, old_dom, new_dom){
       /* Take the the form, the dom ("#answers") for example, and the type of
       element to be saved */
-    if (type_saved == 'tinymce') {tinyMCE.triggerSave();}
     $.ajax({
         data: $(form).serialize(), // get the form data
         type: $(form).attr('method'), // GET or POST
@@ -9,7 +8,6 @@ function ajax_post(form, old_dom, new_dom, type_saved){
         // handle a successful response
         success : function(response) {
             $(old_dom).replaceWith($(response).find(new_dom));
-            if (type_saved == 'tinymce') {tinyMCE.activeEditor.setContent('');}
         },
         // handle a non-successful response
         error : function(xhr,errmsg,err) {

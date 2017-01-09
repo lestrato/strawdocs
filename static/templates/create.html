@@ -3,7 +3,7 @@
 
 {% block content %}
 
-<form method="POST">{% csrf_token %}
+<form method="POST" id="create-document-form">{% csrf_token %}
 
 <div class="row-fluid">
   <h2 class="page-header" style="padding-bottom: 6px;">
@@ -20,13 +20,11 @@
 
           <div class="input-group">
             {{ QCForm.q_title }}
-            <!-- <input type="text" class="form-control question-title-input" placeholder="Question Title" maxlength="40"> -->
             <addon class="input-group-addon area-span" id="basic-addon2"></addon>
           </div>
         </div>
         <div class="panel-body">
-          <div class="question-content">
-            <!-- <textarea></textarea> -->
+          <div class="editor">
             {{ QCForm.content }}
           </div>
         </div>
@@ -42,26 +40,28 @@
   <hr>
 
   <center>
-    <button onclick="removeRequired()" type="submit" name="createDocumentSubmit" class="btn btn-lg btn-success">Create my document!</button>
+    <button type="submit" name="createDocumentSubmit" class="btn btn-lg btn-success">Create my document!</button>
   </center>
 </form>
 
 {% endblock %}
 
 {% block scripts %}
-<script type="text/javascript" src="{% static "js/tinymce/tinymce.min.js" %}"></script>
-<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
-<script type="text/javascript" src="{% static "js/initiate-tinymce.js" %}"></script>
-<script type="text/javascript" src="{% static "js/remove-required.js" %}"></script>
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
+<script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 
-<script type="text/javascript" src="http://latex.codecogs.com/latexit.js"></script>
-<script type="text/javascript">
-  LatexIT.add('p',true);
+<script>
+  questionmde = new SimpleMDE({
+    element: document.getElementById("create-question-editor"),
+    spellChecker: false,
+    status: false,
+  });
 </script>
 
 <script type="text/javascript">
   $(function() {
       var questionTotal = 1;
+      var all_questions = [];
 
       $(document).on('click', '#btn-add', function(e) {
           questionTotal += 1;
@@ -72,24 +72,22 @@
             $('addon').replaceWith('<addon class="input-group-addon btn-remove">x</addon>');
           }
           $(".question:last").clone().appendTo("#question-group").find("input[type='text']").val("");
-          $(".question:last").find(".question-content").html('<textarea id="'+textareaId+'"></textarea>');
-          tinymce.EditorManager.execCommand('mceAddEditor', true, textareaId);
-          $(".question:last").find("textarea").attr("name", "content");
+          $(".question:last").find(".editor").html('<textarea id='+textareaId+' name="content"></textarea>');
+
+          all_questions.push(new SimpleMDE({
+            element: document.getElementById(textareaId),
+            spellChecker: false,
+            status: false,
+          }));
       });
 
-      $(document).on('click', '.btn-remove', function(e) {
-          // destroy tinymce instance
-          tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.panel').find('textarea').attr('id'));
-          // destroy rest of panel
-          $(this).closest('.question').remove();
-          // if only one panel left, destroy remove button
-          if ($("#question-group").children().length == 1) {
-            $('addon').replaceWith('<addon class="input-group-addon area-span"></addon>');
-          }
-
+      $(document).on('submit', '#create-document-form', function(e) {
+          var index = 0;
+          $.each('textarea', function(){
+            $(textarea).val(all_questions[index].value()); // get the value of this simplemde and set the textarea to this value
+            index += 1;
+          });
       });
-
-
   });
 </script>
 {% endblock %}
