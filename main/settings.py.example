@@ -144,3 +144,6 @@ MEDIA_URL = '/media/'
 
 # Authentication redirection
 LOGIN_URL = '/'
+
+# Email
+EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'

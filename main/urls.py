@@ -20,6 +20,7 @@ from document.views import *
 from basesite.views import *
 from information.views import *
 from account.views import *
+from account.views import recover_email
 
 from django.conf.urls.static import static
 from django.conf import settings
@@ -40,6 +41,8 @@ urlpatterns = [
     # account settings
     url(r'^account/$', Settings.as_view()),
     url(r'^account/recovery/$', Recovery.as_view()),
+
+    url(r'^recover_email/$', recover_email),
 
     # misc
     url(r'^logout/$', logout_page),
