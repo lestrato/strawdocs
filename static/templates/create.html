@@ -49,13 +49,10 @@
 {% block scripts %}
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
+<script type="text/javascript" src="{% static "js/initiate-simplemde.js" %}"></script>
 
 <script>
-  questionmde = new SimpleMDE({
-    element: document.getElementById("create-question-editor"),
-    spellChecker: false,
-    status: false,
-  });
+  questionmde = create_simplemde("create-question-editor");
 </script>
 
 <script type="text/javascript">
@@ -74,11 +71,17 @@
           $(".question:last").clone().appendTo("#question-group").find("input[type='text']").val("");
           $(".question:last").find(".editor").html('<textarea id='+textareaId+' name="content"></textarea>');
 
-          all_questions.push(new SimpleMDE({
-            element: document.getElementById(textareaId),
-            spellChecker: false,
-            status: false,
-          }));
+          all_questions.push(create_simplemde(textareaId));
+      });
+
+      $(document).on('click', '.btn-remove', function(e) {
+          //  tinymce.EditorManager.execCommand('mceRemoveEditor',true, $(this).closest('.panel').find('textarea').attr('id'));
+           // destroy rest of panel
+           $(this).closest('.question').remove();
+           // if only one panel left, destroy remove button
+           if ($("#question-group").children().length == 1) {
+             $('addon').replaceWith('<addon class="input-group-addon area-span"></addon>');
+           }
       });
 
       $(document).on('submit', '#create-document-form', function(e) {

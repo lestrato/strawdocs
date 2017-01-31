@@ -278,9 +278,6 @@ Document
     border-bottom-right-radius: 0;
 }
 
-.rich-text {
-  font-family: Arial;
-}
 
 /*****************
 Team
@@ -341,11 +338,6 @@ Create
 /*****************
 Overview
 *****************/
-.post-content {
-  padding: 10px;
-  font-family: Arial;
-}
-
 .panel-footer {
   padding: 5px 10px;
 }
@@ -422,4 +414,75 @@ Simple--MDE
 #question-group .CodeMirror
 {
   border-top: 1px solid #ddd;
+}
+
+.rich-text, .editor-preview, .editor-preview-side {
+  padding: 15px !important;
+}
+.rich-text *, .editor-preview *, .editor-preview-side * {
+  font-family: Arial;
+}
+
+.rich-text h1, .cm-header-1, .editor-preview h1, .editor-preview-side h1 {
+  font-size: 21px !important;
+  margin: 0px 0px 0px 0px;
+}
+.rich-text h2, .cm-header-2, .editor-preview h2, .editor-preview-side h2 {
+  font-size: 20px !important;
+  margin: 0px 0px 0px 0px;
+}
+.rich-text h3, .cm-header-3, .editor-preview h3, .editor-preview-side h3 {
+  font-size: 19px !important;
+  margin: 0px 0px 0px 0px;
+}
+.rich-text h4, .cm-header-4, .editor-preview h4, .editor-preview-side h4 {
+  font-size: 18px !important;
+  margin: 0px 0px 0px 0px;
+}
+.rich-text h5, .cm-header-5, .editor-preview h5, .editor-preview-side h5 {
+  font-size: 17px !important;
+  margin: 0px 0px 0px 0px;
+}
+.rich-text h6, .cm-header-6, .editor-preview h6, .editor-preview-side h6 {
+  font-size: 16px !important;
+  margin: 0px 0px 0px 0px;
+}
+.rich-text blockquote, .editor-preview blockquote , .editor-preview-side blockquote {
+  font-size: 15px !important;
+  margin-bottom: 0px !important;
+}
+.cm-header {
+  font-weight: inherit !important;
+}
+
+.rich-text pre {
+  margin-bottom: 10px !important;
+}
+
+.editor-preview pre, .editor-preview-side pre {
+    display: block !important;
+    padding: 9.5px !important;
+    margin: 0 0 10px !important;
+    font-size: 13px !important;
+    line-height: 1.42857143 !important;
+    word-break: break-all !important;
+    word-wrap: break-word !important;
+    color: #333333 !important;
+    background-color: #f5f5f5 !important;
+    border: 1px solid #cccccc !important;
+    border-radius: 4px !important;
+}
+
+.rich-text table td,
+.rich-text table th {
+    border: 1px solid #ddd !important;
+    padding: 5px !important;
+}
+
+.CodeMirror {
+  color: #333333 !important;
+}
+
+.CodeMirror-code * {
+  font-family: Arial;
 }

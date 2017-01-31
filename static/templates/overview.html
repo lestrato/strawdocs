@@ -5,7 +5,7 @@
 {% load format_activity_date %}
 {% load number_new %}
 {% load is_following %}
-{% load markdown_deux_tags %}
+{% load test_markdown %}
 
 {% block content %}
 
@@ -35,8 +35,8 @@
           </div>
         </div>
         <div class="panel-body">
-          <div class="post-content">
-              {{ question.content|markdown }}
+          <div class="rich-text">
+              {{ question.content|test_markdown|safe }}
           </div>
         </div>
         <div class="panel-footer clearfix">
@@ -111,19 +111,19 @@
                     <hr style='max-width: 50px; border-top: 2px solid #eee;'>
                     <center>
                         <!-- Facebook -->
-                        <a href="http://www.facebook.com/sharer.php?u=https://simplesharebuttons.com" class="fa-stack fa-share-facebook">
+                        <a href="http://www.facebook.com/sharer.php?u=https://simplesharebuttons.com" class="fa-stack fa-2x">
                           <i class="fa fa-circle fa-stack-2x"></i>
                           <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
                         </a>
 
                         <!-- Google+ -->
-                        <a href="https://plus.google.com/share?url=https://simplesharebuttons.com" class="fa-stack fa-share-googleplus">
+                        <a href="https://plus.google.com/share?url=https://simplesharebuttons.com" class="fa-stack fa-2x">
                           <i class="fa fa-circle fa-stack-2x"></i>
                           <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
                         </a>
 
                         <!-- Twitter -->
-                        <a href="https://twitter.com/share?url=https://simplesharebuttons.com&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" class="fa-stack fa-share-twitter">
+                        <a href="https://twitter.com/share?url=https://simplesharebuttons.com&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" class="fa-stack fa-2x">
                           <i class="fa fa-circle fa-stack-2x"></i>
                           <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
                         </a>
@@ -166,6 +166,8 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
+<script type="text/javascript" src="{% static "js/initiate-simplemde.js" %}"></script>
+
 <script type="text/javascript">
   function showComment(show_link) {
     $(show_link).toggle();
@@ -185,11 +187,7 @@
 </script>
 
 <script>
-  questionmde = new SimpleMDE({
-    element: document.getElementById("create-question-editor"),
-    spellChecker: false,
-    status: false,
-  });
+  questionmde = create_simplemde("create-question-editor");
 </script>
 
 <script type="text/javascript">

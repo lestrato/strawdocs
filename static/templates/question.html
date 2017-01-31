@@ -136,19 +136,18 @@
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.css">
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
+<script type="text/javascript" src="{% static "js/initiate-simplemde.js" %}"></script>
 
-<script>
-  questionmde = new SimpleMDE({
-    element: document.getElementById("create-question-editor"),
-    spellChecker: false,
-    status: false,
-  });
+<script type="text/javascript">
+  questionmde = create_simplemde("create-question-editor");
 </script>
+
 
 <script type="text/javascript">
   var questionTotal = 1;
+  var simplemdes = {};
 
-  function create_simplemde(self, post_type) {
+  function dynamic_simplemde(self, post_type) {
     questionTotal += 1;
     textareaId = "mceId"+questionTotal;
     slug = $(self).siblings('.slug').val();
@@ -163,7 +162,7 @@
       form_name = 'editPostForm';
     }
 
-    new_simplemde = '<div class="reply-content row-fluid">'+
+    reply_content = '<div class="reply-content row-fluid">'+
     "<form class="+form_name+" method='POST' style='display: inline'>{% csrf_token %}" +
     '<div class="editor"><textarea name="content" id="'+textareaId+'"></textarea></div>'+
     '<div class="row-fluid clearfix">'+
@@ -180,63 +179,79 @@
 
     if (post_type == 'reply') {
       var hideable_content = $(self).closest('.replies');
-      $(hideable_content).append(new_simplemde);
+      $(hideable_content).append(reply_content);
       $(self).hide();
     } else {
       var hideable_content = $(self).closest('.editable-comment');
-      $(hideable_content).after(new_simplemde);
+      $(hideable_content).after(reply_content);
       $(hideable_content).hide();
     }
 
-    var simplemde = new SimpleMDE ({
-        element: document.getElementById(textareaId),
-        spellChecker: false,
-        status: false,
-    });
+    var new_simplemde = create_simplemde(textareaId);
 
     if (post_type != 'reply') {
-      simplemde.value($(self).closest('.parent-post').find('.rich-text').html());
+      new_simplemde.value($(self).closest('.parent-post').find('.rich-text-markdown').html());
     }
 
-    ///////////////////
-    $(document).on('submit', ".editPostForm", function(event){
+    simplemdes[textareaId] = new_simplemde;
+    delete new_simplemde;
+    console.log(simplemdes);
+
+    $(document).on('submit', ".createReplyForm", function(e){
       // AJAX for submitting replies
-      event.preventDefault();
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      console.log('POST!');
+
       textarea =  $(this).find('textarea'); // get the textarea for this form
-      $(textarea).val(simplemde.value()); // get the value of this simplemde and set the textarea to this value
+
+      var simplemde_id = $(textarea).attr('id');
+      $(textarea).val(simplemdes[simplemde_id].value()); // get the value of this simplemde and set the textarea to this value
       ajax_post($(this), "#posts", "#posts"); // send the post request
-      $(textarea).val(''); // reset the textarea value
-      simplemde.value(''); // reset the simplemde value
+      delete simplemdes[simplemde_id];
     });
 
-    $(document).on('submit', ".createReplyForm", function(event){
-      event.preventDefault();
+    $(document).on('submit', ".editPostForm", function(e){
+      // AJAX for editing posts
+      e.preventDefault();
+      e.stopImmediatePropagation();
+      console.log('POST!');
+
       textarea =  $(this).find('textarea'); // get the textarea for this form
-      $(textarea).val(simplemde.value()); // get the value of this simplemde and set the textarea to this value
+
+      var simplemde_id = $(textarea).attr('id');
+      $(textarea).val(simplemdes[simplemde_id].value()); // get the value of this simplemde and set the textarea to this value
       ajax_post($(this), "#posts", "#posts"); // send the post request
-      $(textarea).val(''); // reset the textarea value
-      simplemde.value(''); // reset the simplemde value
+      delete simplemdes[simplemde_id];
+    });
+
+    $(document).on('click', '.btn-cancel-reply', function(e) {
+      // Destroy the simplemde instance first
+      delete simplemdes[$(this).closest('form').find('textarea').attr('id')];
+      $(this).closest('.replies').find('.add-comment').show();
+      $(this).closest('.reply-content').remove();
+      console.log(simplemdes);
+    });
+
+    $(document).on('click', '.btn-cancel-edit', function(e) {
+      e.stopImmediatePropagation();
+      // Destroy the simplemde instance first
+      delete simplemdes[$(this).closest('form').find('textarea').attr('id')];
+      $(this).closest('.parent-post').find('.editable-comment').show();
+      $(this).closest('.reply-content').remove();
+      console.log(simplemdes);
     });
 
   }
 
   /* FOR QUESTION AND ANSWER EDITING */
   $(document).on('click', '.edit-comment', function(e) {
-      $(this).closest('.editable-comment').after(create_simplemde(this, 'non-reply'));
+      $(this).closest('.editable-comment').after(dynamic_simplemde(this, 'non-reply'));
   });
 
   /* FOR REPLIES */
   $(document).on('click', '.add-comment', function(e) {
-    $(this).closest('.editable-comment').after(create_simplemde(this, 'reply'));
-  });
-
-  $(document).on('click', '.btn-cancel-reply', function(e) {
-    $(this).closest('.replies').find('.add-comment').show();
-    $(this).closest('.reply-content').remove();
-  });
-  $(document).on('click', '.btn-cancel-edit', function(e) {
-    $(this).closest('.parent-post').find('.editable-comment').show();
-    $(this).closest('.reply-content').remove();
+    $(this).closest('.editable-comment').after(dynamic_simplemde(this, 'reply'));
   });
 
 </script>
@@ -244,15 +259,11 @@
 
 <script type="text/javascript">
 
-  answermde = new SimpleMDE({
-    element: document.getElementById("create-post-editor"),
-    spellChecker: false,
-    status: false,
-  });
+  answermde = create_simplemde("create-post-editor");
 
-  $(document).on('submit', '#create-answer-form', function(event) {
+  $(document).on('submit', '#create-answer-form', function(e) {
       // AJAX for submitting answers
-      event.preventDefault();
+      e.preventDefault();
       {% if user.is_anonymous %}
         $("#login").modal("show");
       {% else %}
@@ -265,9 +276,9 @@
   });
 
 
-  $(document).on('submit', ".vote-submit", function(event) {
+  $(document).on('submit', ".vote-submit", function(e) {
     // AJAX for submitting upvotes/downvotes
-    event.preventDefault();
+    e.preventDefault();
     {% if user.is_anonymous %}
       $("#login").modal("show");
     {% else %}

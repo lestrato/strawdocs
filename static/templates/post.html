@@ -1,11 +1,15 @@
 {% load format_date %}
 {% load vote_status %}
 {% load tz %}
-{% load markdown_deux_tags %}
+{% load test_markdown %}
 
-<div class="rich-text">
-{{ post.content|markdown }}
+<div class="panel panel-default">
+    <div class="panel-body">
+        <div class="rich-text">{{ post.content|test_markdown|safe }}</div>
+        <div class="rich-text-markdown" style="display: none;">{{ post.content }}</div>
+    </div>
 </div>
+
 <div class="row-fluid clearfix parent-post-footer">
   <div class="pull-left">
         <div class="btn-group btn-group-xs" role="group" aria-label="...">

@@ -1,0 +1,25 @@
+# whats your tire pressure
+---
+## ipte djackass
+oh shit
+did i just say that?
+
+`var example = "hello!";`
+
+| Column 1 | Column 2 | Column 3 |
+| -------- | -------- | -------- |
+| John | Doe | Male |
+| Mary | Smith | Female |
+
+Or without aligning the columns...
+
+| Column 1 | Column 2 | Column 3 |
+| -------- | -------- | -------- |
+| John | Doe | Male |
+| Mary | Smith | Female |
+
+---
+```
+var example = "hello!";
+alert(example);
+```

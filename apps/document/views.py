@@ -293,6 +293,7 @@ class QuestionView(BaseView):
         return render(request, 'question.html', template_items)
 
     def post_fetch(self, request, **kwargs):
+        print request.POST
         if request.user.is_anonymous():
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
