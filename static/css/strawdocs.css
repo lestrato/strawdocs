@@ -2,23 +2,8 @@
 BASE
 *****************/
 
-/* General */
-@font-face {
-    font-family: ubuntu;
-    src: url('./Ubuntu-R.ttf');
-}
-
-@font-face {
-    font-family: ubuntu-l;
-    src: url('./Ubuntu-L.ttf');
-}
-
 h1 {
   font-size: 48px;
-}
-
-h3 {
-  font-family: ubuntu;
 }
 
 h3 > div {
@@ -30,10 +15,6 @@ html,body{
     height: 100%;
 }
 
-body  {
-  font-family: ubuntu-l;
-}
-
 a {
   cursor: pointer;
   cursor: hand;
@@ -41,7 +22,6 @@ a {
 
 .page-header {
     border-bottom: 1px solid #ddd;
-    font-family: ubuntu;
 }
 
 .modal-dialog {
@@ -80,7 +60,7 @@ a {
 }
 
 .button-favourite > .fa-star {
-  color: #ffeb3b;
+  color: #ffdf00;
 }
 
 .modal-backdrop {background: #f7f7f7;}
@@ -112,7 +92,7 @@ a {
 
 #header {
   margin-top: 0px;
-  font-family: ubuntu;
+  font-weight: 600;
 }
 
 #header a {
@@ -181,6 +161,7 @@ a {
 
 .ribbon .text {
   padding: 0.1em 3em;
+  font-weight: 600;
 }
 
 .right .ribbon {
@@ -252,7 +233,6 @@ a {
 .gray.ribbon .text {
   border: 1px solid #a4a4a4;
 }
-
 /*****************
 Document
 *****************/
@@ -328,13 +308,27 @@ Create
   background-color: transparent;
 }
 
-.btn-remove {
+.question-title-input+.input-group-addon {
   border:0;
   background-color: transparent;
+}
+
+.btn-remove {
   cursor: hand;
   cursor: pointer;
 }
 
+.panel-cloud {
+  border-left-width: 0px;
+  border-radius: 25px;
+  border-width: 0 0px 4px 0px;
+  padding-bottom: 5px;
+}
+
+.fa.fa-4x.panel-cloud {
+  width: 100px;
+  margin-bottom: inherit;
+}
 /*****************
 Overview
 *****************/

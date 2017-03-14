@@ -7,6 +7,8 @@
 {% load is_following %}
 {% load test_markdown %}
 
+{% block head_title %}[{{document.title}}] Overview{% endblock %}
+
 {% block content %}
 
 <div class="row-fluid">
@@ -36,7 +38,7 @@
         </div>
         <div class="panel-body">
           <div class="rich-text">
-              {{ question.content|test_markdown|safe }}
+              {{ question.content|test_markdown|safe|linebreaks }}
           </div>
         </div>
         <div class="panel-footer clearfix">
@@ -145,7 +147,7 @@
 
                     <h3 class="modal-title">Delete</h3>
                     <hr>
-                    <h4> Are you sure you want to destroy '<div id="question-name" style="display: inline; color:#a94442"></div>' and all of its answers, and replies?</h4>
+                    <h4> Are you sure you want to destroy '<div id="question-name" style="display: inline; color:#a94442"></div>' and all of its answers and replies?</h4>
                     <hr>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <form id="form-delete-question" method="post" style="display: inline">{% csrf_token %}
@@ -167,7 +169,18 @@
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
 <script type="text/javascript" src="{% static "js/initiate-simplemde.js" %}"></script>
-
+<script src="https://cdn.jsdelivr.net/remarkable/1.7.1/remarkable.min.js"></script>
+<script>
+var md = new Remarkable({
+  html:         false,        // Enable HTML tags in source
+  xhtmlOut:     false,        // Use '/' to close single tags (<br />)
+  breaks:       true,        // Convert '\n' in paragraphs into <br>
+  langPrefix:   'language-',  // CSS language prefix for fenced blocks
+  linkify:      false,        // Autoconvert URL-like text to links
+});
+</script>
+<script type="text/javascript" async
+  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_CHTML"></script>
 <script type="text/javascript">
   function showComment(show_link) {
     $(show_link).toggle();

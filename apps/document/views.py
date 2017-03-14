@@ -39,6 +39,9 @@ class Home(BaseView):
             return render(request, 'index.html', template_items)
 
         else:
+            password_reset = request.GET.get('password_reset', None)
+            if password_reset and password_reset == 'success':
+                template_items['password_reset'] = True
             return render(request, 'about.html', template_items)
 
     def post_fetch(self, request):

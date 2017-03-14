@@ -1,6 +1,6 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login, logout
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, JsonResponse
 from django.views import View
 from django.template import RequestContext
 
@@ -17,6 +17,8 @@ class BaseView(View):
             )
             if user:
                 login(request, user)
+            else:
+                return
 
     def signUpFormSubmit(self, request):
         SUForm = SignUpForm(request.POST)
@@ -54,10 +56,35 @@ class BaseView(View):
 
     def post(self, request, *args, **kwargs):
         if 'LogInFormSubmit' in request.POST:
-            self.logInFormSubmit(request)
+            LIForm = LogInForm(request.POST)
+            if LIForm.is_valid():
+                user = authenticate(
+                    username=LIForm.cleaned_data['username'],
+                    password=LIForm.cleaned_data['password']
+                )
+                if user:
+                    login(request, user)
+                else:
+                    return JsonResponse({'error_message': 'Wrong credentials were inputted (both fields are case-sensitive.)'})
 
         if 'SignUpFormSubmit' in request.POST:
-            self.signUpFormSubmit(request)
+            SUForm = SignUpForm(request.POST)
+            if SUForm.is_valid():
+                if User.objects.get(username__iexact=SUForm.cleaned_data['username']):
+                    return JsonResponse({'error_message': 'The username already exists. Please try another one.'})
+                if SUForm.cleaned_data['password1'] != SUForm.cleaned_data['password2']:
+                    return JsonResponse({'error_message': 'The two password fields did not match.'})
+                user = User.objects.create_user(
+                    username=SUForm.cleaned_data['username'],
+                    password=SUForm.cleaned_data['password1'],
+                    email=SUForm.cleaned_data['email']
+                )
+                user = authenticate(
+                    username=SUForm.cleaned_data['username'],
+                    password=SUForm.cleaned_data['password1']
+                )
+                if user:
+                    login(request, user)
 
         return self.post_fetch(request, *args, **kwargs)
 

@@ -25,15 +25,37 @@ def login_forbidden(function=None, redirect_field_name=None, redirect_to='/accou
     )
     if function:
         return actual_decorator(function)
+
     return actual_decorator
 
 @method_decorator(login_required, name='dispatch')
 class Settings(BaseView):
     def get_fetch(self, request, template_items):
+        PCForm = PasswordChangeForm()
+        template_items['PCForm'] = PCForm
         return render(request, 'settings.html', template_items)
 
     def post_fetch(self, request):
-        return HttpResponseRedirect('/')
+        print request.POST
+        data = {}
+        if 'passwordResetSubmit' in request.POST:
+            PCForm = PasswordChangeForm(request.POST)
+            if PCForm.is_valid():
+                # check if the existing password for the account is correct
+                if request.user.check_password(PCForm.cleaned_data['current_password']):
+                    # check if the two new passwords are the same
+                    if PCForm.cleaned_data['password1'] != PCForm.cleaned_data['password2']:
+                        data['error_message'] = 'Your two new passwords do not match.'
+                    else:
+                        request.user.set_password(PCForm.cleaned_data['password1'])
+                        request.user.save()
+                        data['success_message'] = 'Password changed.'
+
+                else:
+                    data['error_message'] = 'The existing password you inputted is wrong.'
+
+                return JsonResponse(data)
+        return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 @method_decorator(login_forbidden, name='dispatch')
 class Recovery(BaseView):
@@ -145,11 +167,10 @@ class Recovery(BaseView):
                     except AccountRecoveryString.DoesNotExist:
                         data['error_message'] = 'This recovery link no longer exists.'
 
-                    return JsonResponse(data)
-
                 except User.DoesNotExist:
                     data['error_message'] = 'The wrong username for this recovery link was inputted.'
-                    return JsonResponse(data)
+
+                return JsonResponse(data)
 
         return HttpResponseRedirect('/')
 

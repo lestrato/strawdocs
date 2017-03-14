@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% block head_title %}Settings{% endblock %}
+
 {% block content %}
 
     <h2 class="page-header clearfix">
@@ -9,6 +11,66 @@
     </h2>
 
     <div class="row-fluid">
-        <h4>there isn't anything here yet...</h4>
+      <h4 class="text-center"><a href="#changePassword" data-toggle="modal" >Change password <i class="fa fa-key fa-fw"></i></a></h3>
+      <hr width="50%">
+      <h4 class="text-center"><a href="#changePassword" data-toggle="modal" >Change email <i class="fa fa-envelope-o fa-fw"></i></a></h3>
+      <hr width="50%">
+      <h4 class="text-center"><small>there isn't anything else here..</small></h4>
     </div>
+    <div id="changePassword" class="modal fade">
+        <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <div class="container-fluid">
+
+                        <h3 class="modal-title">Change password</h3>
+                        <hr>
+                        <form method="post" id="change-password-form">{% csrf_token %}
+                            <div class="row-fluid" style="margin-top: 10px">{{ PCForm.current_password }}</div>
+                            <div class="row-fluid" style="margin-top: 10px">{{ PCForm.password1 }}</div>
+                            <div class="row-fluid" style="margin-top: 10px">{{ PCForm.password2 }}</div>
+                            <div id="PasswordResetFormMessageDiv"></div>
+                            <hr>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input id="question-slug" name="passwordResetSubmit" type="hidden">
+                            <button type="submit" class="btn btn-primary pull-right">Change</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+<script type="text/javascript">
+$(document).on('submit', "#change-password-form", function(event) {
+  // AJAX for submitting upvotes/downvotes
+    event.preventDefault();
+    $.ajax({
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('method'), // GET or POST
+        url: $(this).attr('action'), // the file to call
+        // handle a successful response
+        success : function(response) {
+            if (response.error_message) {
+              $('#PasswordResetFormMessageDiv').html(
+                '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
+              )
+            } else if (response.success_message) {
+              window.location.replace("/?password_reset=success");
+            }
+        },
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
+                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+});
+
+</script>
 {% endblock %}

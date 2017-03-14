@@ -45,3 +45,38 @@ class PasswordResetForm(forms.Form):
             }
         ),
     )
+
+class PasswordChangeForm(forms.Form):
+    current_password = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "required":True,
+                "class":"form-control input-sm",
+                "placeholder":"Current password",
+                "type":"password",
+                "render_value":False,
+            }
+        ),
+    )
+    password1 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "required":True,
+                "class":"form-control input-sm",
+                "placeholder":"New password",
+                "type":"password",
+                "render_value":False,
+            }
+        ),
+    )
+    password2 = forms.CharField(
+        widget=forms.PasswordInput(
+            attrs={
+                "required":True,
+                "class":"form-control input-sm",
+                "placeholder":"New password confirm",
+                "type":"password",
+                "render_value":False,
+            }
+        ),
+    )

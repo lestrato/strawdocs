@@ -1,6 +1,8 @@
 {% extends "base.html" %}
 {% load static %}
 
+{% block head_title %}Create{% endblock %}
+
 {% block content %}
 
 <form method="POST" id="create-document-form">{% csrf_token %}
@@ -66,7 +68,7 @@
 
           // if only one panel, add remove button
           if ($("#question-group").children().length == 1) {
-            $('addon').replaceWith('<addon class="input-group-addon btn-remove">x</addon>');
+            $('addon').replaceWith('<addon class="input-group-addon"><i class="fa fa-remove fa-fw btn-remove"></i></addon>');
           }
           $(".question:last").clone().appendTo("#question-group").find("input[type='text']").val("");
           $(".question:last").find(".editor").html('<textarea id='+textareaId+' name="content"></textarea>');
