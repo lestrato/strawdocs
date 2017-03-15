@@ -8,33 +8,6 @@ from basesite.forms import *
 
 class BaseView(View):
     """ To be inherited by every view """
-    def logInFormSubmit(self, request):
-        LIForm = LogInForm(request.POST)
-        if LIForm.is_valid():
-            user = authenticate(
-                username=LIForm.cleaned_data['username'],
-                password=LIForm.cleaned_data['password']
-            )
-            if user:
-                login(request, user)
-            else:
-                return
-
-    def signUpFormSubmit(self, request):
-        SUForm = SignUpForm(request.POST)
-        if SUForm.is_valid():
-            user = User.objects.create_user(
-                username=SUForm.cleaned_data['username'],
-                password=SUForm.cleaned_data['password1'],
-                email=SUForm.cleaned_data['email']
-            )
-            user = authenticate(
-                username=SUForm.cleaned_data['username'],
-                password=SUForm.cleaned_data['password1']
-            )
-            if user:
-                login(request, user)
-
     def get_fetch(self, request, *args, **kwargs):
         ''' To be overridden '''
         pass
@@ -70,10 +43,10 @@ class BaseView(View):
         if 'SignUpFormSubmit' in request.POST:
             SUForm = SignUpForm(request.POST)
             if SUForm.is_valid():
-                if User.objects.get(username__iexact=SUForm.cleaned_data['username']):
+                if User.objects.filter(username__iexact=SUForm.cleaned_data['username']).count() != 0:
                     return JsonResponse({'error_message': 'The username already exists. Please try another one.'})
                 if SUForm.cleaned_data['password1'] != SUForm.cleaned_data['password2']:
-                    return JsonResponse({'error_message': 'The two password fields did not match.'})
+                    return JsonResponse({'error_message': 'Your two passwords do not match.'})
                 user = User.objects.create_user(
                     username=SUForm.cleaned_data['username'],
                     password=SUForm.cleaned_data['password1'],

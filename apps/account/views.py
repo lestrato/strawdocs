@@ -32,11 +32,12 @@ def login_forbidden(function=None, redirect_field_name=None, redirect_to='/accou
 class Settings(BaseView):
     def get_fetch(self, request, template_items):
         PCForm = PasswordChangeForm()
+        ECForm = EmailChangeForm()
         template_items['PCForm'] = PCForm
+        template_items['ECForm'] = ECForm
         return render(request, 'settings.html', template_items)
 
     def post_fetch(self, request):
-        print request.POST
         data = {}
         if 'passwordResetSubmit' in request.POST:
             PCForm = PasswordChangeForm(request.POST)
@@ -55,6 +56,14 @@ class Settings(BaseView):
                     data['error_message'] = 'The existing password you inputted is wrong.'
 
                 return JsonResponse(data)
+
+        if 'emailResetSubmit' in request.POST:
+            ECForm = EmailChangeForm(request.POST)
+            if ECForm.is_valid():
+                request.user.email = ECForm.cleaned_data['email']
+                request.user.save()
+                return JsonResponse({'success_message' : 'Email changed to ' + ECForm.cleaned_data['email']})
+
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
 @method_decorator(login_forbidden, name='dispatch')

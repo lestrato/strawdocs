@@ -80,3 +80,15 @@ class PasswordChangeForm(forms.Form):
             }
         ),
     )
+
+class EmailChangeForm(forms.Form):
+    email = forms.EmailField(
+        widget=forms.TextInput(
+            attrs={
+                 'required':True,
+                 'class': 'form-control input-sm',
+                 'placeholder':'new email address',
+                 "type":"email",
+            }
+        )
+    )

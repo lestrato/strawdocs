@@ -13,7 +13,7 @@
     <div class="row-fluid">
       <h4 class="text-center"><a href="#changePassword" data-toggle="modal" >Change password <i class="fa fa-key fa-fw"></i></a></h3>
       <hr width="50%">
-      <h4 class="text-center"><a href="#changePassword" data-toggle="modal" >Change email <i class="fa fa-envelope-o fa-fw"></i></a></h3>
+      <h4 class="text-center"><a href="#changeEmail" data-toggle="modal" >Change email <i class="fa fa-envelope-o fa-fw"></i></a></h3>
       <hr width="50%">
       <h4 class="text-center"><small>there isn't anything else here..</small></h4>
     </div>
@@ -41,7 +41,28 @@
             </div>
         </div>
     </div>
+    <div id="changeEmail" class="modal fade">
+        <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <div class="container-fluid">
 
+                        <h3 class="modal-title">Change email</h3>
+                        <hr>
+                        <form method="post" id="change-email-form">{% csrf_token %}
+                            <div class="row-fluid" style="margin-top: 10px">{{ ECForm.email }}</div>
+                            <div id="EmailResetFormMessageDiv"></div>
+                            <hr>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+                            <input id="question-slug" name="emailResetSubmit" type="hidden">
+                            <button type="submit" class="btn btn-primary pull-right">Change</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 
 {% block scripts %}
@@ -65,12 +86,36 @@ $(document).on('submit', "#change-password-form", function(event) {
         },
         // handle a non-successful response
         error : function(xhr,errmsg,err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
+            $('#PasswordResetFormMessageDiv').html(
+                '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +errmsg+'</div>'
+            )
             console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
         }
     });
 });
 
+$(document).on('submit', "#change-email-form", function(event) {
+  // AJAX for submitting upvotes/downvotes
+    event.preventDefault();
+    $.ajax({
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('method'), // GET or POST
+        url: $(this).attr('action'), // the file to call
+        // handle a successful response
+        success : function(response) {
+            console.log(response);
+            $('#EmailResetFormMessageDiv').html(
+            '<div class="alert alert-success fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Hooray!</strong> ' +response.success_message+'</div>'
+          )
+        },
+        // handle a non-successful response
+        error : function(xhr,errmsg,err) {
+            $('#EmailResetFormMessageDiv').html(
+                '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +errmsg+'</div>'
+            )
+            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        }
+    });
+});
 </script>
 {% endblock %}
