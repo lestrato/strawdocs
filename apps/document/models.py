@@ -137,9 +137,6 @@ class Question(Post):
     upvotes = GenericRelation(Upvote)
     downvotes = GenericRelation(Downvote)
 
-    class Meta:
-        unique_together = ('title', 'document',)
-
     def __str__(self):
         return self.title
 

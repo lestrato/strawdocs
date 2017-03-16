@@ -82,7 +82,7 @@ class PasswordChangeForm(forms.Form):
     )
 
 class EmailChangeForm(forms.Form):
-    email = forms.EmailField(
+    email = forms.CharField(
         widget=forms.TextInput(
             attrs={
                  'required':True,

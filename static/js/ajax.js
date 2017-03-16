@@ -7,13 +7,14 @@ function ajax_post(form, old_dom, new_dom){
         url: $(form).attr('action'), // the file to call
         // handle a successful response
         success : function(response) {
+            $('#alert-absolute-div').html('');
             $(old_dom).replaceWith($(response).find(new_dom));
         },
         // handle a non-successful response
-        error : function(xhr,errmsg,err) {
-            $('#results').html("<div class='alert-box alert radius' data-alert>Oops! We have encountered an error: "+errmsg+
-                " <a href='#' class='close'>&times;</a></div>"); // add the error to the dom
-            console.log(xhr.status + ": " + xhr.responseText); // provide a bit more info about the error to the console
+        error : function() {
+            $('#alert-absolute-div').html(
+              '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
+            )
         }
     });
 }

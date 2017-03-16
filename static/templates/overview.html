@@ -19,7 +19,7 @@
               <i id="fa-star" {% if not document|is_following:user %}style='display: none'{% endif %} class="fa fa-star fa-stack-1x"></i>
               <i class="fa fa-star-o fa-stack-1x "></i>
             </span>
-            [{{ document.title }}] Overview
+            [<strong>{{ document.title }}</strong>] Overview
         </form>
         <a class="pull-right" href="#docSettings" data-toggle="modal" ><i class='fa fa-share-alt'></i></a>
     </h2>
@@ -31,7 +31,7 @@
         <div class="panel-heading">
           <div class="row-fluid clearfix">
           <h3 style="margin: 0;">
-            <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.title }}</a>
+            <a href="{{request.path}}/{{ question.slug }}">{{ question.title }}</a>
              <small class="pull-right">{{ question.hits }} view{% if question.hits != 1 %}s{% endif %}</small>
           </h3>
           </div>
@@ -44,7 +44,7 @@
         <div class="panel-footer clearfix">
           <div class="row-fluid">
             <div class="pull-left">
-              <a href="{{request.path}}/{{ question.title|title_to_url }}">{{ question.answer_set.all.count }} answer{% if question.answer_set.all.count != 1%}s{% endif %}
+              <a href="{{request.path}}/{{ question.slug }}">{{ question.answer_set.all.count }} answer{% if question.answer_set.all.count != 1%}s{% endif %}
                 {% if not user.is_anonymous %}<em style="color:black">({{question|number_new:user}} new)</em>{% endif %}
               </a>
             </div>

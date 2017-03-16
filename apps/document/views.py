@@ -18,11 +18,11 @@ def fetch_document(slug):
         return None
 
 
-def fetch_question(document, title):
+def fetch_question(document, slug):
     try:
         return Question.objects.get(
             document=document,
-            title=title,
+            slug=slug,
         )
     except Question.DoesNotExist:
         # redirect to page not found, temporarily the home page
@@ -224,8 +224,7 @@ class DocumentOverview(BaseView):
 class QuestionView(BaseView):
     def get_fetch(self, request, template_items, **kwargs):
         doc_slug = kwargs.get('doc_slug', None)
-        question_url = kwargs.get('question_url', None)
-        question_title = question_url.replace ("_", " ")
+        question_slug = kwargs.get('question_url', None)
 
         # this document, based on slug
         document = fetch_document(slug=doc_slug)
@@ -235,7 +234,7 @@ class QuestionView(BaseView):
 
         # parse the question url into a question title by changing underscores to spaces
         # this question, based on title
-        question = fetch_question(document=document, title=question_title)
+        question = fetch_question(document=document, slug=question_slug)
 
         if not question:
             return HttpResponseRedirect('/404')
@@ -301,8 +300,7 @@ class QuestionView(BaseView):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         doc_slug = kwargs.get('doc_slug', None)
-        question_url = kwargs.get('question_url', None)
-        question_title = question_url.replace ("_", " ")
+        question_slug = kwargs.get('question_url', None)
 
         # this document, based on slug
         document = fetch_document(slug=doc_slug)
@@ -312,7 +310,7 @@ class QuestionView(BaseView):
 
         # parse the question url into a question title by changing underscores to spaces
         # this question, based on title
-        question = fetch_question(document=document, title=question_title)
+        question = fetch_question(document=document, slug=question_slug)
 
         if not question:
             return HttpResponseRedirect('/404')

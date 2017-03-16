@@ -23,6 +23,8 @@
     </head>
 
     <body>
+        <div id="alert-absolute-div">
+        </div>
         <div class="left ribbon-holder">
           <div class="darkblue ribbon">
             <span class="text">Now in Alpha! </span>
@@ -143,6 +145,7 @@
                 url: $(this).attr('action'), // the file to call
                 // handle a successful response
                 success : function(response) {
+                    $('#alert-absolute-div').html('');
                     if (response.error_message) {
                       $('#AccountLoginMessageDiv').html(
                         '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
@@ -152,9 +155,9 @@
                     }
                 },
                 // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#AccountLoginMessageDiv').html(
-                      '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +errmsg+'</div>'
+                error : function() {
+                    $('#alert-absolute-div').html(
+                      '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
                     )
                 }
             });
@@ -170,6 +173,7 @@
                 url: $(this).attr('action'), // the file to call
                 // handle a successful response
                 success : function(response) {
+                    $('#alert-absolute-div').html('');
                     if (response.error_message) {
                       $('#AccountSignupMessageDiv').html(
                         '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
@@ -179,9 +183,9 @@
                     }
                 },
                 // handle a non-successful response
-                error : function(xhr,errmsg,err) {
-                    $('#AccountSignupMessageDiv').html(
-                      '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +errmsg+'</div>'
+                error : function() {
+                    $('#alert-absolute-div').html(
+                      '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
                     )
                 }
             });

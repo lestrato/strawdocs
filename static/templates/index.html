@@ -10,10 +10,7 @@
     </div>
     <div class="pull-right">
         <a href="/create" class="btn btn-xs btn-primary">
-            <i class="fa fa-plus fa-fw"></i> Create
-            <div class="hidden-xs" style="display: inline;">
-                 strawdoc
-            </div>
+            <i class="fa fa-plus fa-fw"></i> Create strawdoc
         </a>
     </div>
 </h2>
@@ -53,7 +50,7 @@
                     <h3 class="modal-title">Delete Document</h3>
                     <hr>
                     <h4> Are you sure you want to destroy '<div id="doc-name" style="display: inline; color:#a94442"></div>' and all of its questions, answers, and replies?</h4>
-                    <div class="alert alert-danger"> This is an irrevertible change. Once you click delete you cannot get this data back. </div>
+                    <div class="alert alert-warning"> This is an irrevertible change. Once you click delete you cannot get this data back. </div>
                     <hr>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <form method="post" style="display: inline">{% csrf_token %}
@@ -81,7 +78,7 @@
     // AJAX for unfavouriting
     $(document).on('submit', '.change-favourite-form', function(event) {
       event.preventDefault();
-      ajax_post($(this), "#your-starred-documents", "#your-starred-documents", 'None');
+      ajax_post($(this), "#your-starred-documents", "#your-starred-documents");
     });
 </script>
 {% endblock %}

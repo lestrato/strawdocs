@@ -51,6 +51,12 @@ a {
     margin-top: -1px;
 }
 
+#alert-absolute-div {
+  width:100%;
+  position:absolute;
+  z-index:1;
+}
+
 .button-favourite {
   height: auto !important;
   width: 1.28571429em !important;
@@ -75,6 +81,9 @@ a {
     transition: inherit;
 }
 
+.panel-default {
+  border-top-width: 1px;
+}
 /* Base components */
 #wrapper {
     min-height: 100%;
@@ -387,14 +396,8 @@ hr.thin {
 /*****************
 Simple--MDE
 *****************/
-.editor > .editor-toolbar {
-  border-top-left-radius: inherit;
-  border-top-right-radius: inherit;
-}
-
 .editor > .CodeMirror {
-  border-bottom-left-radius: inherit;
-  border-bottom-right-radius: inherit;
+  border-bottom-width: 4px;
   min-height: 100px;
 }
 

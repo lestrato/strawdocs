@@ -12,9 +12,7 @@ class DocumentCreationForm(forms.Form):
         )
     )
 class QuestionCreationForm(forms.Form):
-    q_title = forms.RegexField(
-        regex=r'^[a-z||A-Z||0-9|| ]+$',
-        error_message = ("Question titles must contain only letters, numbers, and spaces."),
+    q_title = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 'required':'True',

@@ -9,6 +9,8 @@ from smtplib import SMTPException
 from django.template import loader
 from django.utils import timezone
 
+import re
+
 from basesite.views import *
 from account.forms import *
 from account.models import *
@@ -47,6 +49,8 @@ class Settings(BaseView):
                     # check if the two new passwords are the same
                     if PCForm.cleaned_data['password1'] != PCForm.cleaned_data['password2']:
                         data['error_message'] = 'Your two new passwords do not match.'
+                    elif len(PCForm.cleaned_data['password1']) < 6:
+                        data['error_message'] = 'Passwords cannot be shorter than 6 characters/numbers.'
                     else:
                         request.user.set_password(PCForm.cleaned_data['password1'])
                         request.user.save()
@@ -56,13 +60,6 @@ class Settings(BaseView):
                     data['error_message'] = 'The existing password you inputted is wrong.'
 
                 return JsonResponse(data)
-
-        if 'emailResetSubmit' in request.POST:
-            ECForm = EmailChangeForm(request.POST)
-            if ECForm.is_valid():
-                request.user.email = ECForm.cleaned_data['email']
-                request.user.save()
-                return JsonResponse({'success_message' : 'Email changed to ' + ECForm.cleaned_data['email']})
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
@@ -166,7 +163,8 @@ class Recovery(BaseView):
 
                         if PRForm.cleaned_data['password1'] != PRForm.cleaned_data['password2']:
                             data['error_message'] = 'Your two passwords do not match.'
-
+                        elif len(PRForm.cleaned_data['password1']) < 6:
+                            data['error_message'] = 'Passwords cannot be shorter than 6 characters/numbers.'                       
                         else:
                             user.set_password(PRForm.cleaned_data['password1'])
                             user.save()
@@ -174,10 +172,10 @@ class Recovery(BaseView):
                             data['success_message'] = 'Password changed!'
 
                     except AccountRecoveryString.DoesNotExist:
-                        data['error_message'] = 'This recovery link no longer exists.'
+                        data['error_message'] = 'A recovery link for this user does not exist or has expired.'
 
                 except User.DoesNotExist:
-                    data['error_message'] = 'The wrong username for this recovery link was inputted.'
+                    data['error_message'] = 'An account with this username does not exist.'
 
                 return JsonResponse(data)
 
