@@ -233,6 +233,7 @@ a {
 .gray.ribbon .text {
   border: 1px solid #a4a4a4;
 }
+
 /*****************
 Document
 *****************/
@@ -257,6 +258,11 @@ Document
     border-top-right-radius: 0;
     border-bottom-right-radius: 0;
 }
+
+
+/*****************
+About
+*****************/
 
 
 /*****************

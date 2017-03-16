@@ -4,6 +4,8 @@ from django.http import HttpResponseRedirect, JsonResponse
 from django.views import View
 from django.template import RequestContext
 
+import re
+
 from basesite.forms import *
 
 class BaseView(View):
@@ -47,6 +49,10 @@ class BaseView(View):
                     return JsonResponse({'error_message': 'The username already exists. Please try another one.'})
                 if SUForm.cleaned_data['password1'] != SUForm.cleaned_data['password2']:
                     return JsonResponse({'error_message': 'Your two passwords do not match.'})
+                if not re.match(r".+@.+\..+", SUForm.cleaned_data['username']):
+                    return JsonResponse({'error_message': 'Please enter a valid email address.'})
+                if len(SUForm.cleaned_data['password1']) < 6:
+                    return JsonResponse({'error_message': 'Password cannot be shorter than 6 characters/numbers.'})
                 user = User.objects.create_user(
                     username=SUForm.cleaned_data['username'],
                     password=SUForm.cleaned_data['password1'],
@@ -58,7 +64,8 @@ class BaseView(View):
                 )
                 if user:
                     login(request, user)
-
+            else:
+                print SUForm.errors
         return self.post_fetch(request, *args, **kwargs)
 
 # HTTP Error 400

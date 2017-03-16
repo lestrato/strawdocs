@@ -43,7 +43,7 @@ class SignUpForm(forms.Form):
         label=_("Username"),
         error_messages={ 'invalid': _("This value must contain only letters, numbers and underscores.") }
     )
-    email = forms.EmailField(
+    email = forms.CharField(
         widget=forms.TextInput(
             attrs={
                 "required":True,
