@@ -25,11 +25,6 @@
     <body>
         <div id="alert-absolute-div">
         </div>
-        <div class="left ribbon-holder">
-          <div class="darkblue ribbon">
-            <span class="text">Now in Alpha! </span>
-          </div>
-        </div>
         <div id="wrapper" class="container">
         <div id="wrapper-body">
             <div class="row">
@@ -156,9 +151,11 @@
                 },
                 // handle a non-successful response
                 error : function() {
+                    $('#login').modal('hide');
                     $('#alert-absolute-div').html(
                       '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
                     )
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 }
             });
         });
@@ -184,9 +181,11 @@
                 },
                 // handle a non-successful response
                 error : function() {
+                    $('#signup').modal('hide');
                     $('#alert-absolute-div').html(
                       '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
                     )
+                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 }
             });
         });

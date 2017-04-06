@@ -93,51 +93,6 @@
     </form>
 </div>
 
-<div id="docSettings" class="modal fade">
-    <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
-        <div class="modal-content">
-            <div class="modal-body">
-                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-                <div class="container-fluid">
-
-                    <h3 class="modal-title">Share</h3>
-                    <hr>
-                        <div class="input-group">
-                          <span class="input-group-btn">
-                            <button id="fetchBtn" data-clipboard-target="#docLink" class="btn btn-default" type="button" data-toggle="popover" data-content="Copied!">
-                                <i class="fa fa-link"></i>
-                            </button>
-                          </span>
-                          <input id="docLink" type="text" onfocus="this.select();" class="form-control" value="https://strawdocs.com/doc/{{ document.slug }}" readonly="readonly">
-                        </div>
-                    <hr style='max-width: 50px; border-top: 2px solid #eee;'>
-                    <center>
-                        <!-- Facebook -->
-                        <a href="http://www.facebook.com/sharer.php?u=https://simplesharebuttons.com" class="fa-stack fa-2x">
-                          <i class="fa fa-circle fa-stack-2x"></i>
-                          <i class="fa fa-facebook fa-stack-1x fa-inverse"></i>
-                        </a>
-
-                        <!-- Google+ -->
-                        <a href="https://plus.google.com/share?url=https://simplesharebuttons.com" class="fa-stack fa-2x">
-                          <i class="fa fa-circle fa-stack-2x"></i>
-                          <i class="fa fa-google-plus fa-stack-1x fa-inverse"></i>
-                        </a>
-
-                        <!-- Twitter -->
-                        <a href="https://twitter.com/share?url=https://simplesharebuttons.com&amp;text=Simple%20Share%20Buttons&amp;hashtags=simplesharebuttons" class="fa-stack fa-2x">
-                          <i class="fa fa-circle fa-stack-2x"></i>
-                          <i class="fa fa-twitter fa-stack-1x fa-inverse"></i>
-                        </a>
-                        <hr>
-                        <button type="button" class="btn btn-default" href="document-settings.html" data-dismiss="modal" style="width: 100px;">Done</button>
-                    </center>
-                </div>
-            </div>
-        </div>
-    </div>
-</div>
-
 <div id="questionDelete" class="modal fade">
     <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
         <div class="modal-content">
@@ -161,6 +116,40 @@
 </div>
 
 {% endif %}
+
+<div id="docSettings" class="modal fade">
+    <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="container-fluid">
+
+                    <h3 class="modal-title">Share</h3>
+                    <hr>
+                        <div class="input-group">
+                          <span class="input-group-btn">
+                            <button id="fetchBtn" data-clipboard-target="#docLink" class="btn btn-default" type="button" data-toggle="popover" data-content="Copied!">
+                                <i class="fa fa-link"></i>
+                            </button>
+                          </span>
+                          <input id="docLink" type="text" onfocus="this.select();" class="form-control" value="http://strawdocs.com/doc/{{ document.slug }}" readonly="readonly">
+                        </div>
+                    <hr style='max-width: 50px; border-top: 2px solid #eee;'>
+                    <center>
+                        <!-- Facebook -->
+                        <a type="button" class="btn btn-facebook-share" href="http://www.facebook.com/sharer.php?u=http://strawdocs.com/doc/{{ document.slug }}"><i class="fa fa-facebook fa-fw fa-2x fa-inverse"></i></a>
+                        <!-- GooglePlus -->
+                        <a type="button" class="btn btn-google-share" href="https://plus.google.com/share?url=http://strawdocs.com/doc/{{ document.slug }}"><i class="fa fa-google-plus fa-fw fa-2x fa-inverse"></i></a>
+                        <!-- Twitter -->
+                        <a type="button" class="btn btn-twitter-share" href="https://twitter.com/share?url=http://strawdocs.com/doc/{{ document.slug }}&amp;text=New%20Strawdoc:%20"><i class="fa fa-twitter fa-fw fa-2x fa-inverse"></i></a>
+                        <hr>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" style="width: 100px;">Done</button>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 {% endblock %}
 

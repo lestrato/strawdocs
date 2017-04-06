@@ -15,6 +15,7 @@ function ajax_post(form, old_dom, new_dom){
             $('#alert-absolute-div').html(
               '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
             )
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
         }
     });
 }

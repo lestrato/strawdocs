@@ -13,17 +13,13 @@
   these within 24 hours!
 </div>
 <br>
-<form data-toggle="validator" role="form" class="form-horizontal">
+<form class="form-horizontal" id="ticket-creation-form" method="POST">{% csrf_token %}
+  <input type="hidden" name="ticketCreationSubmit">
   <div class="row-fluid">
     <div class="form-group">
-        <label for="helpTopic" class="control-label col-sm-6">Help Topic: </label>
+        <label class="control-label col-sm-6">Help Topic: </label>
         <div class="col-sm-30">
-          <select id="helpTopic" class="form-control" required>
-              <option disabled="disabled">-Select a help topic-</option>
-              <option>Feedback</option>
-              <option>General inquiry</option>
-              <option>Report a problem</option>
-          </select>
+          {{TCForm.topic}}
         </div>
     </div>
   </div>
@@ -34,19 +30,17 @@
   </div>
   <div class="row-fluid">
     <div class="form-group">
-        <label for="helpEmail" class="control-label col-sm-6">Email Address: </label>
+        <label class="control-label col-sm-6">Email Address: </label>
         <div class="col-sm-30">
-          <input type="email" class="form-control" id="helpEmail" placeholder="Email" data-error="Invalid email" required>
-          <div class="help-block with-errors"></div>
+          {{TCForm.email}}
         </div>
     </div>
   </div>
   <div class="row-fluid">
     <div class="form-group">
-        <label for="helpName" class="control-label col-sm-6">First Name: </label>
+        <label class="control-label col-sm-6">First Name: </label>
         <div class="col-sm-30">
-          <input type="text" class="form-control" id="helpName" placeholder="Name" data-error="This needs to be filled out" required>
-          <div class="help-block with-errors"></div>
+          {{TCForm.name}}
         </div>
     </div>
   </div>
@@ -57,23 +51,21 @@
   </div>
   <div class="row-fluid">
     <div class="form-group">
-        <label for="helpSummary" class="control-label col-sm-6">Issue Summary: </label>
+        <label class="control-label col-sm-6">Issue Summary: </label>
         <div class="col-sm-30">
-          <input type="text" class="form-control" id="helpSummary" placeholder="Summary" data-error="This needs to be filled out"  required>
-          <div class="help-block with-errors"></div>
+          {{TCForm.summary}}
         </div>
     </div>
   </div>
   <div class="row-fluid">
     <div class="form-group">
-        <label for="helpDetails" class="control-label col-sm-6">Issue Details: </label>
+        <label class="control-label col-sm-6">Issue Details: </label>
         <div class="col-sm-30">
-          <textarea id="helpDetails" class="form-control" placeholder="Start talkin!" data-error="This needs to be filled out" style="resize: vertical;" required></textarea>
-          <div class="help-block with-errors"></div>
-
+          {{TCForm.details}}
         </div>
     </div>
   </div>
+  <div id="TicketCreationMessageDiv"></div>
   <hr>
   <center>
     <div class="form-group">
@@ -83,7 +75,58 @@
 
 </form>
 
+<div id="supportThanks" class="modal fade">
+    <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
+        <div class="modal-content">
+            <div class="modal-body">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <div class="container-fluid">
+                    <h3 class="modal-title">Thank you!</h3>
+                    <hr>
+                    <div class="row-fluid">We appreciate the time you took to help improve this website. We'll be in touch with you soon.</div>
+                    <hr>
+                    <center><button type="button" class="btn btn-default" data-dismiss="modal" style="width: 100px;">Done</button></center>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
 {% endblock %}
 
 {% block scripts %}
+<script>
+$(document).on('submit', "#ticket-creation-form", function(event) {
+  // AJAX for submitting upvotes/downvotes
+    event.preventDefault();
+    $.ajax({
+        data: $(this).serialize(), // get the form data
+        type: $(this).attr('method'), // GET or POST
+        url: $(this).attr('action'), // the file to call
+        dataType: 'json',
+        // handle a successful response
+        success : function(response) {
+            console.log(response);
+            $('#alert-absolute-div').html('');
+            if (response.error_message) {
+              $('#TicketCreationMessageDiv').html(
+                '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
+              )
+            } else {
+              $('#TicketCreationMessageDiv').html('');
+              $('#supportThanks').modal('show');
+              $('input[name="summary"]').val('');
+              $('textarea[name="details"]').val('');              
+            }
+        },
+        // handle a non-successful response
+        error : function() {
+            $('#alert-absolute-div').html(
+              '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
+            )
+            $('html, body').animate({ scrollTop: 0 }, 'fast');
+        }
+    });
+});
+</script>
 {% endblock %}

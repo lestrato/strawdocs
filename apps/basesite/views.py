@@ -49,7 +49,7 @@ class BaseView(View):
                     return JsonResponse({'error_message': 'The username already exists. Please try another one.'})
                 if SUForm.cleaned_data['password1'] != SUForm.cleaned_data['password2']:
                     return JsonResponse({'error_message': 'Your two passwords do not match.'})
-                if not re.match(r".+@.+\..+", SUForm.cleaned_data['username']):
+                if not re.match(r".+@.+\..+", SUForm.cleaned_data['email']):
                     return JsonResponse({'error_message': 'Please enter a valid email address.'})
                 if len(SUForm.cleaned_data['password1']) < 6:
                     return JsonResponse({'error_message': 'Password cannot be shorter than 6 characters/numbers.'})
