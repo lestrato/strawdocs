@@ -2,6 +2,8 @@ from django.shortcuts import render
 from basesite.views import *
 from information.forms import *
 from information.models import *
+from django.core.mail import send_mail
+
 import re
 
 class Team(BaseView):
@@ -9,7 +11,7 @@ class Team(BaseView):
         return render(request, 'team.html', template_items)
     def post_fetch(self, request):
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
-        
+
 class Support(BaseView):
     def get_fetch(self, request, template_items):
     	TCForm = TicketCreationForm()

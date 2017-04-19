@@ -16,10 +16,10 @@
         <form id="change-favourite-submit" style="display: inline;" method="post">{% csrf_token %}
             <input type="hidden" name="changeFavouriteSubmit">
             <span class="fa-stack button-favourite">
-              <i id="fa-star" {% if not document|is_following:user %}style='display: none'{% endif %} class="fa fa-star fa-stack-1x"></i>
+              <i id="fa-star" {% if not document|is_following:user or not user.is_authenticated %}style='display: none'{% endif %} class="fa fa-star fa-stack-1x"></i>
               <i class="fa fa-star-o fa-stack-1x "></i>
             </span>
-            [<strong>{{ document.title }}</strong>] Overview
+            [{{ document.title }}] Overview
         </form>
         <a class="pull-right" href="#docSettings" data-toggle="modal" ><i class='fa fa-share-alt'></i></a>
     </h2>
@@ -85,7 +85,7 @@
                 </div>
               </div>
           </div>
-        <div class="row-fluid">
+        <div class="row" style="margin: 0;">
           <button type="button" class="btn btn-sm btn-default btn-cancel pull-left" onclick="hideComment(this)">Cancel</button>
           <input type="hidden" name="createQuestionSubmit">
           <button type="submit" class="btn btn-sm btn-success pull-right">Create question</button>
@@ -100,9 +100,9 @@
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <div class="container-fluid">
 
-                    <h3 class="modal-title">Delete</h3>
+                    <h3 class="modal-title">Delete Question</h3>
                     <hr>
-                    <h4> Are you sure you want to destroy '<div id="question-name" style="display: inline; color:#a94442"></div>' and all of its answers and replies?</h4>
+                    <h4> Are you sure you want to destroy '<div id="question-name" style="display: inline; color:#a94442; word-break: break-all;"></div>' and all of its answers and replies?</h4>
                     <hr>
                     <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
                     <form id="form-delete-question" method="post" style="display: inline">{% csrf_token %}
@@ -196,7 +196,11 @@ var md = new Remarkable({
     $(document).on('click', ".button-favourite", function(event){
         // AJAX for favouriting/unfavouriting
         event.preventDefault();
-        ajax_post($(this).closest('form'), "#change-favourite-submit", "#change-favourite-submit");
+        if ('{{user.is_authenticated}}' === 'CallableBool(False)') {
+          $('#login').modal('show');
+        } else {
+          ajax_post($(this).closest('form'), "#change-favourite-submit", "#change-favourite-submit");  
+        }
     });
 
     $(document).on('submit', '#form-create-question', function(event) {

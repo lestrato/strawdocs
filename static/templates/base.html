@@ -27,6 +27,7 @@
         </div>
         <div id="wrapper" class="container">
         <div id="wrapper-body">
+            <div id="content-body">
             <div class="row">
               <div id="nav-link" class="pull-right">
                   {% if user.is_authenticated %}
@@ -118,7 +119,7 @@
 
             {% block content %}
             {% endblock %}
-
+            </div>
             <div id="site-footer">
                 <ul>
                     <li><a href="/team">Team</a></li>
@@ -146,7 +147,7 @@
                         '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
                       )
                     } else {
-                      window.location.replace("/");
+                      window.location.reload();
                     }
                 },
                 // handle a non-successful response
@@ -176,7 +177,7 @@
                         '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
                       )
                     } else {
-                      window.location.replace("/");
+                      window.location.reload();
                     }
                 },
                 // handle a non-successful response

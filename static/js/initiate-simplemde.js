@@ -7,16 +7,5 @@ function create_simplemde(element) {
    renderingConfig: {
        singleLineBreaks: true,
    },
-   previewRender: function(plainText, preview) { // Async method
-       setTimeout(function(){
-           preview.innerHTML = customMarkdownParser(plainText);
-       }, 250);
-
-       return "Loading...";
-   },
    });
-}
-
-function customMarkdownParser(plainText) {
-  return md.render(plainText);
 }
