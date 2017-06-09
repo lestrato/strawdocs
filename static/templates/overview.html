@@ -158,27 +158,25 @@
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
 <script type="text/javascript" src="{% static "js/initiate-simplemde.js" %}"></script>
-<script src="https://cdn.jsdelivr.net/remarkable/1.7.1/remarkable.min.js"></script>
-<script>
-var md = new Remarkable({
-  html:         false,        // Enable HTML tags in source
-  xhtmlOut:     false,        // Use '/' to close single tags (<br />)
-  breaks:       true,        // Convert '\n' in paragraphs into <br>
-  langPrefix:   'language-',  // CSS language prefix for fenced blocks
-  linkify:      false,        // Autoconvert URL-like text to links
-});
-</script>
-<script type="text/javascript" async
-  src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=AM_CHTML"></script>
 <script type="text/javascript">
+
+  questionmde = create_simplemde("create-question-editor");
+  window.onbeforeunload = askConfirm;
+  function askConfirm() {
+    if (questionmde.value() != ''){
+     return "Your unsaved data will be lost."; 
+    }
+  }
   function showComment(show_link) {
     $(show_link).toggle();
     $(show_link).parents('.row-fluid').siblings('.hidden-comment').toggle();
   }
   function hideComment(hide_button) {
+    questionmde.value(''); // reset the simplemde value
     comment = $(hide_button).closest('.hidden-comment');
     $(comment).siblings('.row-fluid').children('.add-comment').toggle();
     $(comment).toggle();
+
   }
   function question_delete(title, slug) {
     // inject the title into the form
@@ -186,40 +184,34 @@ var md = new Remarkable({
     // inject the slug into the form
     $("#question-slug").val(slug);
   }
-</script>
 
-<script>
-  questionmde = create_simplemde("create-question-editor");
-</script>
-
-<script type="text/javascript">
-    $(document).on('click', ".button-favourite", function(event){
-        // AJAX for favouriting/unfavouriting
-        event.preventDefault();
-        if ('{{user.is_authenticated}}' === 'CallableBool(False)') {
-          $('#login').modal('show');
-        } else {
-          ajax_post($(this).closest('form'), "#change-favourite-submit", "#change-favourite-submit");  
-        }
-    });
-
-    $(document).on('submit', '#form-create-question', function(event) {
-      // AJAX for creating questions
+  $(document).on('click', ".button-favourite", function(event){
+      // AJAX for favouriting/unfavouriting
       event.preventDefault();
-      textarea =  $(this).find('textarea'); // get the textarea for this form
-      $(textarea).val(questionmde.value()); // get the value of this simplemde and set the textarea to this value
-      ajax_post($(this), "#question-group", "#question-group");
-      $(textarea).val(''); // reset the textarea value
-      questionmde.value(''); // reset the simplemde value
-      $(this).find('.question-title-input').val('');
-      hideComment(this);
-    });
+      if ('{{user.is_authenticated}}' === 'CallableBool(False)') {
+        $('#login').modal('show');
+      } else {
+        ajax_post($(this).closest('form'), "#change-favourite-submit", "#change-favourite-submit");  
+      }
+  });
 
-    $(document).on('submit', '#form-delete-question', function(event) {
-      // AJAX for creating questions
-      event.preventDefault();
-      ajax_post($(this), "#question-group", "#question-group");
-      $('#questionDelete').modal('hide');
+  $(document).on('submit', '#form-create-question', function(event) {
+    // AJAX for creating questions
+    event.preventDefault();
+    textarea =  $(this).find('textarea'); // get the textarea for this form
+    $(textarea).val(questionmde.value()); // get the value of this simplemde and set the textarea to this value
+    ajax_post($(this), "#question-group", "#question-group");
+    $(textarea).val(''); // reset the textarea value
+    questionmde.value(''); // reset the simplemde value
+    $(this).find('.question-title-input').val('');
+    hideComment(this);
+  });
+
+  $(document).on('submit', '#form-delete-question', function(event) {
+    // AJAX for creating questions
+    event.preventDefault();
+    ajax_post($(this), "#question-group", "#question-group");
+    $('#questionDelete').modal('hide');
     });
 </script>
 {% endblock %}

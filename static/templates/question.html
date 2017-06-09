@@ -148,6 +148,22 @@
 <script type="text/javascript">
   var questionTotal = 1;
   var simplemdes = {};
+  var answermde = create_simplemde("create-post-editor");
+
+  window.onbeforeunload = askConfirm;
+
+  function askConfirm() {
+    allsimplemdes = simplemdes;
+    allsimplemdes['answer_mde'] = answermde;
+    console.log(allsimplemdes)
+    for (var mde in allsimplemdes) {
+      if (allsimplemdes.hasOwnProperty(mde)) {
+        if (allsimplemdes[mde].value() != ''){
+          return "Your unsaved data will be lost."; 
+        }
+      }
+    }
+  }
 
   function dynamic_simplemde(self, post_type) {
     questionTotal += 1;
@@ -256,13 +272,6 @@
     $(this).closest('.editable-comment').after(dynamic_simplemde(this, 'reply'));
   });
 
-</script>
-
-
-<script type="text/javascript">
-
-  answermde = create_simplemde("create-post-editor");
-
   $(document).on('submit', '#create-answer-form', function(e) {
       // AJAX for submitting answers
       e.preventDefault();
@@ -310,21 +319,4 @@
 
 </script>
 
-<script type="text/javascript">
-  $(document).ready(function() {
-      needToConfirm = false; 
-      window.onbeforeunload = askConfirm;
-  });
-
-  function askConfirm() {
-      if (needToConfirm) {
-          // Put your custom message here 
-          return "Your unsaved data will be lost."; 
-      }
-  }
-
-  $("select,input,textarea").change(function() {
-      needToConfirm = true;
-  });  
-</script>
 {% endblock %}
