@@ -40,7 +40,7 @@ a:hover {
 */}
 
 .page-header {
-    border-bottom: 1px solid #ddd;
+    border-bottom: 1px solid #eee;
 }
 
 .modal-dialog {
@@ -275,6 +275,20 @@ a:hover {
 }
 
 /*****************
+Index
+*****************/
+@media (max-width: 420px) {
+  .hide-text {
+    display: none;
+  }
+}
+@media (min-width: 421px) {
+  .hide-text {
+    display: inline;
+  }
+}
+
+/*****************
 Document
 *****************/
 /* button group fix */
@@ -386,6 +400,7 @@ Create
   border-radius: 25px;
   border-width: 0 0px 4px 0px;
   padding-bottom: 5px;
+  border-color: #555;
 }
 
 .fa.fa-4x.panel-cloud {

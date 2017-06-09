@@ -7,7 +7,7 @@
 {% block head_title %}[{{document.title}}] {{ question.title }}{% endblock %}
 
 {% block content %}
-    <h2 class="page-header">[<a href="{{document_url}}">{{document.title}}</a>] {{ question.title }}</h2>
+    <h2 class="page-header" style="word-break: break-all;">[<a href="{{document_url}}">{{document.title}}</a>] {{ question.title }}</h2>
     <div id="posts">
       <div class="row">
         <div class="parent-post col-lg-36">
@@ -308,5 +308,23 @@
     $(this).remove();
   });
 
+</script>
+
+<script type="text/javascript">
+  $(document).ready(function() {
+      needToConfirm = false; 
+      window.onbeforeunload = askConfirm;
+  });
+
+  function askConfirm() {
+      if (needToConfirm) {
+          // Put your custom message here 
+          return "Your unsaved data will be lost."; 
+      }
+  }
+
+  $("select,input,textarea").change(function() {
+      needToConfirm = true;
+  });  
 </script>
 {% endblock %}

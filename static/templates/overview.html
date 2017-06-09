@@ -31,7 +31,7 @@
         <div class="panel-heading">
           <div class="row-fluid clearfix">
           <h3 style="margin: 0;">
-            <a href="{{request.path}}/{{ question.slug }}">{{ question.title }}</a>
+            <a href="{{request.path}}/{{ question.slug }}" style="word-wrap: break-word;">{{ question.title }}</a>
              <small class="pull-right">{{ question.hits }} view{% if question.hits != 1 %}s{% endif %}</small>
           </h3>
           </div>
@@ -137,11 +137,11 @@
                     <hr style='max-width: 50px; border-top: 2px solid #eee;'>
                     <center>
                         <!-- Facebook -->
-                        <a type="button" class="btn btn-facebook-share" href="http://www.facebook.com/sharer.php?u=http://strawdocs.com/doc/{{ document.slug }}"><i class="fa fa-facebook fa-fw fa-2x fa-inverse"></i></a>
+                        <a type="button" class="btn btn-facebook-share" href="http://www.facebook.com/sharer.php?u=http://strawdocs.com/doc/{{ document.slug }}" target="_blank"><i class="fa fa-facebook fa-fw fa-2x fa-inverse"></i></a>
                         <!-- GooglePlus -->
-                        <a type="button" class="btn btn-google-share" href="https://plus.google.com/share?url=http://strawdocs.com/doc/{{ document.slug }}"><i class="fa fa-google-plus fa-fw fa-2x fa-inverse"></i></a>
+                        <a type="button" class="btn btn-google-share" href="https://plus.google.com/share?url=http://strawdocs.com/doc/{{ document.slug }}" target="_blank"><i class="fa fa-google-plus fa-fw fa-2x fa-inverse"></i></a>
                         <!-- Twitter -->
-                        <a type="button" class="btn btn-twitter-share" href="https://twitter.com/share?url=http://strawdocs.com/doc/{{ document.slug }}&amp;text=New%20Strawdoc:%20"><i class="fa fa-twitter fa-fw fa-2x fa-inverse"></i></a>
+                        <a type="button" class="btn btn-twitter-share" href="https://twitter.com/share?url=http://strawdocs.com/doc/{{ document.slug }}&amp;text=New%20Strawdoc:%20" target="_blank"><i class="fa fa-twitter fa-fw fa-2x fa-inverse"></i></a>
                         <hr>
                         <button type="button" class="btn btn-default" data-dismiss="modal" style="width: 100px;">Done</button>
                     </center>

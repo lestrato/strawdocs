@@ -10,7 +10,7 @@
     </div>
     <div class="pull-right">
         <a href="/create" class="btn btn-xs btn-primary">
-            <i class="fa fa-plus fa-fw"></i> Create strawdoc
+            <i class="fa fa-plus fa-fw"></i> <div class="hide-text">Create strawdoc</div>
         </a>
     </div>
 </h2>
@@ -23,7 +23,7 @@
         {% include "document_section.html" with document=document doc_type="managed"%}
     {% endfor %}
     <div class="col-sm-18 col-xs-36">
-        <a href="/create" class="btn btn-default btn-block">
+        <a href="/create" class="btn btn-default btn-block" style="white-space: inherit;">
             <h4><i class="fa fa-plus fa-fw"></i> Create a new strawdoc</h4>
         </a>
     </div>

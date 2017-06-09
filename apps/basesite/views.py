@@ -47,6 +47,8 @@ class BaseView(View):
             if SUForm.is_valid():
                 if User.objects.filter(username__iexact=SUForm.cleaned_data['username']).count() != 0:
                     return JsonResponse({'error_message': 'The username already exists. Please try another one.'})
+                if User.objects.filter(email__iexact=SUForm.cleaned_data['email']).count() != 0:
+                    return JsonResponse({'error_message': 'That email is already being used. Please try another one.'})
                 if SUForm.cleaned_data['password1'] != SUForm.cleaned_data['password2']:
                     return JsonResponse({'error_message': 'Your two passwords do not match.'})
                 if not re.match(r".+@.+\..+", SUForm.cleaned_data['email']):
