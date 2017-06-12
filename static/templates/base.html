@@ -132,6 +132,11 @@
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
         <script src="{% static "bootstrap/js/bootstrap.min.js" %}"></script>
         <script type="text/javascript">
+        $(document).ready(function(){
+          if ('{{ login }}' == 'True') {
+            $('#login').modal('show');
+          }
+        });
         $(document).on('submit', "#account-login-form", function(event) {
           // AJAX for submitting upvotes/downvotes
             event.preventDefault();
@@ -146,6 +151,8 @@
                       $('#AccountLoginMessageDiv').html(
                         '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
                       )
+                    } else if (response.next_url) {
+                      document.location.href=response.next_url;
                     } else {
                       window.location.reload();
                     }
@@ -176,6 +183,8 @@
                       $('#AccountSignupMessageDiv').html(
                         '<div class="alert alert-danger fade in text-center" style="margin-top: 10px; margin-bottom: 0px;"><strong>Whoops!</strong> ' +response.error_message+'</div>'
                       )
+                    } else if (response.next_url) {
+                      document.location.href=response.next_url;
                     } else {
                       window.location.reload();
                     }

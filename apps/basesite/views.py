@@ -17,6 +17,10 @@ class BaseView(View):
     def get(self, request, *args, **kwargs):
         template_items = {}
 
+        next_url = request.GET.get('next', None)
+        if next_url:
+            template_items['login'] = True
+
         LIForm = LogInForm()
         SUForm = SignUpForm()
         template_items['LIForm'] = LIForm
@@ -68,6 +72,11 @@ class BaseView(View):
                     login(request, user)
             else:
                 print SUForm.errors
+
+        next_url = request.GET.get('next', None)
+        if next_url:
+            return JsonResponse({'next_url': next_url})
+
         return self.post_fetch(request, *args, **kwargs)
 
 # HTTP Error 400

@@ -1,11 +1,11 @@
 from django.shortcuts import render
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, Http404, HttpResponse, JsonResponse
-from django.contrib.auth.decorators import login_required
 from django.utils.decorators import method_decorator
 from django.utils import timezone
 from django.db.models import Count
 
+from basesite.decorators import login_required
 from basesite.views import *
 from document.models import *
 from document.forms import *
