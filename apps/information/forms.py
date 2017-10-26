@@ -14,7 +14,7 @@ class TicketCreationForm(forms.Form):
         )
     )
     email = forms.CharField(
-        widget=forms.TextInput(
+        widget=forms.EmailInput(
             attrs={
                  'required':'True',
                  'class': 'form-control',

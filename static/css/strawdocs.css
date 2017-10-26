@@ -71,10 +71,15 @@ a:hover {
 }
 
 #alert-absolute-div {
-  width:100%;
   position:absolute;
   z-index:1;
   opacity:.9;
+  right: 0;
+  margin: 10px;
+}
+
+#alert-absolute-div button.close {
+  padding-left: 10px;
 }
 
 .button-favourite {
