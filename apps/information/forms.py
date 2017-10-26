@@ -49,7 +49,7 @@ class TicketCreationForm(forms.Form):
                 'required':'True',
                 'class': 'form-control',
                 'placeholder':'Start talkin!',
-                'style':'resize:vertical; height: 75px;',
+                'style':'resize:vertical; min-height: 75px;',
             }
         )
     )
