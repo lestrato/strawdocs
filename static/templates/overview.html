@@ -158,6 +158,7 @@
 <script src="https://cdn.jsdelivr.net/simplemde/latest/simplemde.min.js"></script>
 <script type="text/javascript" src="{% static "js/ajax.js" %}"></script>
 <script type="text/javascript" src="{% static "js/initiate-simplemde.js" %}"></script>
+<script type="text/javascript" src="{% static "js/clipboard.min.js" %}"></script>
 <script type="text/javascript">
 
   questionmde = create_simplemde("create-question-editor");
@@ -212,6 +213,9 @@
     event.preventDefault();
     ajax_post($(this), "#question-group", "#question-group");
     $('#questionDelete').modal('hide');
-    });
+  });
+  $(document).ready(function() {
+    new Clipboard('#fetchBtn')
+  });
 </script>
 {% endblock %}
