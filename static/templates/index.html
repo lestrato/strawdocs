@@ -23,8 +23,8 @@
         {% include "document_section.html" with document=document doc_type="managed"%}
     {% endfor %}
     <div class="col-sm-18 col-xs-36 {% if documents_managed.count == 0 %}col-sm-offset-9{% endif %}">
-        <a href="{% url 'create' %}" class="btn btn-default btn-block" style="white-space: inherit;">
-            <h4><i class="fa fa-plus fa-fw"></i> Create a new strawdoc</h4>
+        <a href="{% url 'create' %}" class="btn btn-default btn-block" style="max-height: 63px; white-space: inherit;">
+            <h4 style="line-height: 1.3"><i class="fa fa-plus fa-fw"></i> Create a new strawdoc</h4>
         </a>
     </div>
 </div>
