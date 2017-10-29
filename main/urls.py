@@ -48,11 +48,11 @@ urlpatterns = [
     url(r'^logout/$', logout_page, name="logout"),
     url(r'^admin/', admin.site.urls, name="admin"),
 
-    # testing error urls, these get changed when the server is in production
-    url(r'^400/$', bad_request.as_view(), name="400"),
-    url(r'^403/$', permission_denied.as_view(), name="403"),
-    url(r'^404/$', page_not_found.as_view(), name="404"),
-    url(r'^500/$', server_error.as_view(), name="500"),
+    # # testing error urls, these get changed when the server is in production
+    # url(r'^400/$', bad_request.as_view(), name="400"),
+    # url(r'^403/$', permission_denied.as_view(), name="403"),
+    # url(r'^404/$', page_not_found.as_view(), name="404"),
+    # url(r'^500/$', server_error.as_view(), name="500"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

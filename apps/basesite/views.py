@@ -3,6 +3,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.http import HttpResponseRedirect, JsonResponse
 from django.views import View
 from django.template import RequestContext
+from django.shortcuts import render_to_response
 
 import re
 
@@ -79,33 +80,39 @@ class BaseView(View):
 
         return self.post_fetch(request, *args, **kwargs)
 
-# HTTP Error 400
-class bad_request(BaseView):
-    def get_fetch(self, request, template_items):
-        response = render(request, '400.html', template_items)
-        response.status_code = 400
-        return response
 
-# HTTP Error 403
-class permission_denied(BaseView):
-    def get_fetch(self, request, template_items):
-        response = render(request, '403.html', template_items)
-        response.status_code = 403
-        return response
+def handler400(request):
+    return render(
+        request=request,
+        template_name='400.html', 
+        context={},
+        status=400
+    )
 
-# HTTP Error 404
-class page_not_found(BaseView):
-    def get_fetch(self, request, template_items):
-        response = render(request, '404.html', template_items)
-        response.status_code = 404
-        return response
 
-# HTTP Error 500
-class server_error(BaseView):
-    def get(self, request, template_items):
-        response = render(request, '500.html', template_items)
-        response.status_code = 500
-        return response
+def handler403(request):
+    return render(
+        request=request,
+        template_name='403.html', 
+        context={},
+        status=403
+    )
+
+def handler404(request):
+    return render(
+        request=request,
+        template_name='404.html', 
+        context={},
+        status=404
+    )
+
+def handler500(request):
+    return render(
+        request=request,
+        template_name='500.html', 
+        context={},
+        status=500
+    )
 
 def logout_page(request):
     logout(request)
