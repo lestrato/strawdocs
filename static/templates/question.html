@@ -297,6 +297,18 @@
       ajax_post($(this), $(this).closest('.btn-group-xs'), ".btn-group-xs");
     {% endif %}
   });
+
+  $(document).on('submit', ".remove-post", function(e) {
+    // AJAX for deleting a post
+    e.preventDefault();
+    ajax_post($(this), "#posts", "#posts");
+  });
+
+  $(document).on('click', "[type='submit']", function(e) {
+    // AJAX for submitting upvotes/downvotes
+    e.preventDefault();
+    $(this).closest('form').submit();
+  });
 </script>
 
 <script type="text/javascript">

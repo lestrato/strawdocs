@@ -67,6 +67,10 @@ class Post(models.Model):
         settings.AUTH_USER_MODEL,
         blank=False
     )
+    removed = models.BooleanField(
+        default=False,
+        blank=False,
+    )
 
     def child(self):
         for subclass in self.__class__.__subclasses__():

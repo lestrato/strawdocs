@@ -40,7 +40,17 @@
     <div class="dropdown pull-right">
       <a href="#" data-toggle="dropdown" class="dropdown-toggle"><b class="caret"></b></a>
       <ul class="dropdown-menu">
-        <li><a href="#report-modal" role="button" data-toggle="modal"><i class="fa fa-flag fa-fw"></i> Report</a></li>
+        <li>
+        {% if post_type != "question" %}
+          {% if post.created_by == user or post.parent_question.created_by == user %}
+            <form class="remove-post" method="POST" style="display: inline">{% csrf_token %}
+              <input type="hidden" name="removeSubmit" value="{{post.slug}}">
+              <a style="padding: 3px 15px;" type="submit"><i class="fa fa-trash fa-fw"></i> Remove</a>
+            </form>
+          {% endif %}
+        {% endif %}
+        <a href="#report-modal" role="button" data-toggle="modal"><i class="fa fa-flag fa-fw"></i> Report</a>
+        </li>
       </ul>
     </div>
   </div>

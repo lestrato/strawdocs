@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from django.contrib.auth import authenticate, login
 from django.http import HttpResponseRedirect, Http404, HttpResponse, JsonResponse
 from django.utils.decorators import method_decorator
@@ -391,22 +391,22 @@ class QuestionView(BaseView):
 
         if 'editPostSubmit' in request.POST:
             # fetch post by slug
-            print request.POST
-            pass
-            try:
-                old_post = Question.objects.get(slug=request.POST['editPostSubmit'])
-            except Question.DoesNotExist:
-                try:
-                    old_post = Answer.objects.get(slug=request.POST['editPostSubmit'])
-                except Answer.DoesNotExist:
-                    raise Http404("Post does not exist")
+            post = get_object_or_404(Post, slug=request.POST['editPostSubmit'])
 
             # check to make sure user is the one who created it
-            if request.user == old_post.created_by:
+            if request.user == post.created_by:
                 PCForm = PostCreationForm(request.POST)
                 if PCForm.is_valid():
                     # now change the content
-                    old_post.content = PCForm.cleaned_data['content']
-                    old_post.save()
+                    post.content = PCForm.cleaned_data['content']
+                    post.save()
+
+        if 'removeSubmit' in request.POST:
+            # fetch post by slug
+            post = get_object_or_404(Post, slug=request.POST['removeSubmit'])
+
+            if type(post) != Question:
+                if post.created_by == request.user or post.parent_question.created_by == request.user:
+                    post.delete()
 
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
