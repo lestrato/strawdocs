@@ -224,7 +224,7 @@ class DocumentOverview(BaseView):
 class QuestionView(BaseView):
     def get_fetch(self, request, template_items, **kwargs):
         doc_slug = kwargs.get('doc_slug', None)
-        question_slug = kwargs.get('question_url', None)
+        question_slug = kwargs.get('question_slug', None)
 
         # this document, based on slug
         document = fetch_document(slug=doc_slug)
@@ -288,7 +288,6 @@ class QuestionView(BaseView):
         template_items['PCForm'] = PCForm
 
         template_items['document'] = document
-        template_items['document_url'] = '/doc/' + document.slug
         template_items['question'] = question
         template_items['answers'] = answers
         return render(request, 'question.html', template_items)
@@ -299,7 +298,7 @@ class QuestionView(BaseView):
             return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))
 
         doc_slug = kwargs.get('doc_slug', None)
-        question_slug = kwargs.get('question_url', None)
+        question_slug = kwargs.get('question_slug', None)
 
         # this document, based on slug
         document = fetch_document(slug=doc_slug)

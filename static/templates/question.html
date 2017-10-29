@@ -7,7 +7,7 @@
 {% block head_title %}[{{document.title}}] {{ question.title }}{% endblock %}
 
 {% block content %}
-    <h2 class="page-header" style="word-break: break-all;">[<a href="{{document_url}}">{{document.title}}</a>] {{ question.title }}</h2>
+    <h2 class="page-header" style="word-break: break-all;">[<a href="{% url 'overview' doc_slug=document.slug %}">{{document.title}}</a>] {{ question.title }}</h2>
     <div id="posts">
       <div class="row">
         <div class="parent-post col-lg-36">

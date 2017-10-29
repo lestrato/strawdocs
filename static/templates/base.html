@@ -40,9 +40,9 @@
                   <div class="dropdown pull-right">
                       <a id="nav-dropdown" data-toggle="dropdown" class="dropdown-toggle">{{ user.username }} <b class="caret"></b></a>
                       <ul class="dropdown-menu">
-                         <li><a href="/"><i class="fa fa-file-text fa-fw"></i> Documents</a></li>
-                         <li><a href="/account"><i class="fa fa-gear fa-fw"></i> Settings</a></li>
-                         <li><a href="/logout/"><i class="fa fa-lock fa-fw"></i> Log out</a></li>
+                         <li><a href="{% url 'home' %}"><i class="fa fa-file-text fa-fw"></i> Documents</a></li>
+                         <li><a href="{% url 'settings' %}"><i class="fa fa-gear fa-fw"></i> Settings</a></li>
+                         <li><a href="{% url 'logout' %}"><i class="fa fa-lock fa-fw"></i> Log out</a></li>
                       </ul>
                   </div>
                   {% else %}
@@ -70,7 +70,7 @@
                                                   </div>
 
                                                   <div class="pull-right">
-                                                      <small><a href="/account/recovery">reset password</a></small>
+                                                      <small><a href="{% url 'recovery'}%">reset password</a></small>
                                                   </div>
                                               </div>
                                               <div id='AccountLoginMessageDiv'></div>
@@ -121,15 +121,15 @@
               </div>
 
             </div>
-            <h1 id="header" class="text-center"><a href="/">strawdocs</a></h1>
+            <h1 id="header" class="text-center"><a href="{% url 'home' %}">strawdocs</a></h1>
 
             {% block content %}
             {% endblock %}
             </div>
             <div id="site-footer">
                 <ul>
-                    <li><a href="/team">Team</a></li>
-                    <li><a href="/support">Support</a></li>
+                    <li><a href="{% url 'team' %}">Team</a></li>
+                    <li><a href="{% url 'support' %}">Support</a></li>
                 </ul>
             </div>
         </div>

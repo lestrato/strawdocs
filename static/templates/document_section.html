@@ -6,7 +6,7 @@
                 <div class="row-fluid">
                     <div class="col-xs-30">
                         <h4>
-                            <a href="./doc/{{ document.slug }}" style="word-wrap: break-word;">{{document.title}}</a><br>
+                            <a href="{% url 'overview' doc_slug=document.slug %}" style="word-wrap: break-word;">{{document.title}}</a><br>
                             <small>{{ document|number_new:user }} unread answer{% if document|number_new:user|str_to_int != 1 %}s{% endif %}</small>
                         </h4>
                     </div>

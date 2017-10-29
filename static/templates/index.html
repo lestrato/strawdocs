@@ -9,7 +9,7 @@
         <i class="fa fa-file-text-o fa-fw"></i> Documents
     </div>
     <div class="pull-right">
-        <a href="/create" class="btn btn-xs btn-primary">
+        <a href="{% url 'create' %}" class="btn btn-xs btn-primary">
             <i class="fa fa-plus fa-fw"></i> <div class="hide-text">Create strawdoc</div>
         </a>
     </div>
@@ -23,7 +23,7 @@
         {% include "document_section.html" with document=document doc_type="managed"%}
     {% endfor %}
     <div class="col-sm-18 col-xs-36">
-        <a href="/create" class="btn btn-default btn-block" style="white-space: inherit;">
+        <a href="{% url 'create' %}" class="btn btn-default btn-block" style="white-space: inherit;">
             <h4><i class="fa fa-plus fa-fw"></i> Create a new strawdoc</h4>
         </a>
     </div>

@@ -27,32 +27,32 @@ from django.conf import settings
 
 urlpatterns = [
     # all documents/about page
-    url(r'^$', Home.as_view()),
-    url(r'^doc/(?P<doc_slug>[a-z||A-Z||0-9]+)$', DocumentOverview.as_view()),
-    url(r'^doc/(?P<doc_slug>[a-z||A-Z||0-9]+)/(?P<question_url>[a-z||A-Z||0-9||_]+)$', QuestionView.as_view()),
+    url(r'^$', Home.as_view(), name="home"),
+    url(r'^doc/(?P<doc_slug>[a-z||A-Z||0-9]+)$', DocumentOverview.as_view(), name="overview"),
+    url(r'^doc/(?P<doc_slug>[a-z||A-Z||0-9]+)/(?P<question_slug>[a-z||A-Z||0-9||_]+)$', QuestionView.as_view(), name="question"),
 
     # information, login not required
-    url(r'^team/$', Team.as_view()),
-    url(r'^support/$', Support.as_view()),
+    url(r'^team/$', Team.as_view(), name="team"),
+    url(r'^support/$', Support.as_view(), name="support"),
 
     # document creation
-    url(r'^create/$', CreateDocument.as_view()),
+    url(r'^create/$', CreateDocument.as_view(), name="create"),
 
     # account settings
-    url(r'^account/$', Settings.as_view()),
-    url(r'^account/recovery/$', Recovery.as_view()),
+    url(r'^account/$', Settings.as_view(), name="settings"),
+    url(r'^account/recovery/$', Recovery.as_view(), name="recovery"),
 
-    url(r'^recover_email/$', recover_email),
+    url(r'^recover_email/$', recover_email, name="recover_email"),
 
     # misc
-    url(r'^logout/$', logout_page),
-    url(r'^admin/', admin.site.urls),
+    url(r'^logout/$', logout_page, name="logout"),
+    url(r'^admin/', admin.site.urls, name="admin"),
 
     # testing error urls, these get changed when the server is in production
-    url(r'^400/$', bad_request.as_view()),
-    url(r'^403/$', permission_denied.as_view()),
-    url(r'^404/$', page_not_found.as_view()),
-    url(r'^500/$', server_error.as_view()),
+    url(r'^400/$', bad_request.as_view(), name="400"),
+    url(r'^403/$', permission_denied.as_view(), name="403"),
+    url(r'^404/$', page_not_found.as_view(), name="404"),
+    url(r'^500/$', server_error.as_view(), name="500"),
 ]
 
 urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
