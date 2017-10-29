@@ -10,7 +10,7 @@ def number_new(this_object, user):
     if type(this_object).__name__ == 'Document':
         total_unread = 0
         for question in this_object.question_set.all():
-            answers = question.answer_set
+            answers = question.question_answer
             if not user.userquestionlastvisit_set.first():
                 total_unread += answers.count()
             else:
@@ -21,7 +21,7 @@ def number_new(this_object, user):
         return str(total_unread)
 
     elif type(this_object).__name__ == 'Question':
-        answers = this_object.answer_set
+        answers = this_object.question_answer
         if not user.userquestionlastvisit_set.first():
             return str(answers.count())
         else:

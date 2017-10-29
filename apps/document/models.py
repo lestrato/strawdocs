@@ -5,6 +5,7 @@ from django.conf import settings
 from django.contrib.contenttypes.fields import GenericForeignKey
 from django.contrib.contenttypes.fields import GenericRelation
 from django.contrib.contenttypes.models import ContentType
+from django.core.exceptions import ObjectDoesNotExist
 
 from randomslugfield import RandomSlugField
 from simplemde.fields import SimpleMDEField
@@ -67,8 +68,18 @@ class Post(models.Model):
         blank=False
     )
 
-    class Meta:
-        abstract = True
+    def child(self):
+        for subclass in self.__class__.__subclasses__():
+            try:
+                return getattr(self, subclass.__name__.lower())
+            except (AttributeError, ObjectDoesNotExist):
+                continue
+
+    def upvotes(self):
+        return Vote.objects.filter(post=self, vote_type='upvote')
+
+    def downvotes(self):
+        return Vote.objects.filter(post=self, vote_type='downvote')
 
 class Vote(models.Model):
     ''' Every vote has:
@@ -76,25 +87,23 @@ class Vote(models.Model):
     - a user who created it
     - a question/answer/reply it references
     '''
+    VOTE_TYPES = (
+        ('upvote', 'upvote'),
+        ('downvote', 'downvote'),
+    )
+    post = models.ForeignKey(
+        'Post',
+        blank=False
+    )
     created_by = models.ForeignKey(
         settings.AUTH_USER_MODEL,
         blank=False
     )
-    #  generic foreign key to either a question/answer/reply
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    class Meta:
-        abstract = True
-
-class Upvote(Vote):
-    def __str__(self):
-        return self.content_object.slug
-
-class Downvote(Vote):
-    def __str__(self):
-        return self.content_object.slug
+    vote_type = models.CharField(
+        blank=False,
+        max_length=10,
+        choices=VOTE_TYPES,
+    )
 
 class Reply(Post):
     ''' Every reply is a Post and also has:
@@ -102,16 +111,11 @@ class Reply(Post):
     < a question/answer/reply it addresses
     > a set of replies
     '''
-    #  generic foreign key to either a question/answer/reply
-    content_type = models.ForeignKey(ContentType, on_delete=models.CASCADE)
-    object_id = models.PositiveIntegerField()
-    content_object = GenericForeignKey('content_type', 'object_id')
-
-    upvotes = GenericRelation(Upvote)
-    downvotes = GenericRelation(Downvote)
-
-    def __str__(self):
-        return self.content_object.slug
+    post = models.ForeignKey(
+        'Post',
+        blank=False,
+        related_name='post_reply'
+    )
 
 class Question(Post):
     ''' Every question is a Post and also has:
@@ -133,9 +137,6 @@ class Question(Post):
         default=0,
         blank=False,
     )
-    replies = GenericRelation(Reply)
-    upvotes = GenericRelation(Upvote)
-    downvotes = GenericRelation(Downvote)
 
     def __str__(self):
         return self.title
@@ -147,15 +148,11 @@ class Answer(Post):
     < a question it belongs to
     > a set of replies
     '''
-    question = models.ForeignKey(
+    parent_question = models.ForeignKey(
         'Question',
         on_delete=models.CASCADE,
+        related_name='question_answer',
     )
-    replies = GenericRelation(Reply)
-
-    upvotes = GenericRelation(Upvote)
-    downvotes = GenericRelation(Downvote)
-
     def __str__(self):
         return self.question.title
 

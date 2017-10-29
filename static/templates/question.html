@@ -18,7 +18,7 @@
 
         </div>
         <div class="replies col-xs-34 col-xs-offset-2">
-          {% for reply in question.replies.all %}
+          {% for reply in question.post_reply.all %}
               {% include "post.html" with post_type="reply" post=reply %}
 
               <hr class="thin">
@@ -54,7 +54,7 @@
               </div>
 
               <div class="replies col-xs-34 col-xs-offset-2">
-                {% for reply in answer.replies.all %}
+                {% for reply in answer.post_reply.all %}
                     {% include "post.html" with post_type="reply" post=reply %}
                     <hr class="thin">
                 {% endfor %}

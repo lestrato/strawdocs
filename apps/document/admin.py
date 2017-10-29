@@ -20,17 +20,12 @@ class AnswerAdmin(admin.ModelAdmin):
 admin.site.register(Answer, AnswerAdmin)
 
 class ReplyAdmin(admin.ModelAdmin):
-    list_display = ('slug', 'content_type', 'created_on',)
+    list_display = ('slug', 'post', 'created_on',)
     readonly_fields=('created_on',)
     pass
 admin.site.register(Reply, ReplyAdmin)
 
-class UpvoteAdmin(admin.ModelAdmin):
-    list_display = ('created_by',)
+class VoteAdmin(admin.ModelAdmin):
+    list_display = ('post', 'created_by','vote_type',)
     pass
-admin.site.register(Upvote, UpvoteAdmin)
-
-class DownvoteAdmin(admin.ModelAdmin):
-    list_display = ('created_by',)
-    pass
-admin.site.register(Downvote, DownvoteAdmin)
+admin.site.register(Vote, VoteAdmin)

@@ -245,26 +245,25 @@ class QuestionView(BaseView):
 
         # get sortby filter
         sortby = request.GET.get('sortby', False)
-        if sortby and sortby == 'active' or sortby == 'votes' or sortby == 'newest':
-            if request.GET['sortby'] == 'active':
-                answers = Answer.objects.filter(
-                    question=question,
-                ).annotate(
-                    num_posts=Count('replies'),
-                ).order_by('-num_posts')
-            elif request.GET['sortby'] == 'votes':
-                answers = Answer.objects.filter(
-                    question=question,
-                ).annotate(
-                    net_votes=(Count('upvotes')-Count('downvotes')),
-                ).order_by('-net_votes')
-            elif request.GET['sortby'] == 'newest':
-                answers = Answer.objects.filter(
-                    question=question,
-                ).order_by('-created_on')
+        if sortby == 'active':
+            answers = Answer.objects.filter(
+                parent_question=question,
+            ).annotate(
+                num_posts=Count('post_reply'),
+            ).order_by('-num_posts')
+        elif sortby == 'votes':
+            answers = Answer.objects.filter(
+                parent_question=question,
+            ).annotate(
+                net_votes=(Count('vote', vote_type='upvote')-Count('vote', vote_type='downvote')),
+            ).order_by('-net_votes')
+        elif sortby == 'newest':
+            answers = Answer.objects.filter(
+                parent_question=question,
+            ).order_by('-created_on')
         else:
             answers = Answer.objects.filter(
-                question=question,
+                parent_question=question,
             ).order_by('created_on')
 
         if not request.user.is_anonymous():
@@ -322,7 +321,7 @@ class QuestionView(BaseView):
                 new_answer = Answer(
                     content=PCForm.cleaned_data['content'],
                     created_by=request.user,
-                    question=question,
+                    parent_question=question,
                 )
                 new_answer.save()
 
@@ -330,103 +329,66 @@ class QuestionView(BaseView):
             PCForm = PostCreationForm(request.POST)
             if PCForm.is_valid():
                 # fetch the question or answer object based on the thread_slug
-                thread_slug = request.POST["createReplySubmit"]
+                post_slug = request.POST["createReplySubmit"]
                 try:
-                    thread_object = Question.objects.get(slug=thread_slug)
-                except Question.DoesNotExist:
-                    try:
-                        thread_object = Answer.objects.get(slug=thread_slug)
-                    except Answer.DoesNotExist:
-                        raise Http404("Post does not exist")
+                    post = Post.objects.get(slug=post_slug).child()
+                except Post.DoesNotExist:
+                    raise Http404("Post does not exist")
 
                 # check if this reply object exists already
                 # create new reply object
                 new_reply = Reply(
                     content=PCForm.cleaned_data['content'],
                     created_by=request.user,
-                    content_object=thread_object,
+                    post=post,
                 )
                 new_reply.save()
 
         if 'upvoteSubmit' in request.POST:
-            object_slug = request.POST["upvoteSubmit"]
-            post_type = None
             try:
-                this_object = Question.objects.get(slug=object_slug)
-            except Question.DoesNotExist:
-                try:
-                    this_object = Answer.objects.get(slug=object_slug)
-                except Answer.DoesNotExist:
-                    try:
-                        this_object = Reply.objects.get(slug=object_slug)
-                        post_type = 'reply'
-                    except Reply.DoesNotExist:
-                        error_message = 'The post does not exist anymore.'
-                        ReplyNotExistError = {'error': error_message}
-                        return JsonResponse(ReplyNotExistError)
+                post = Post.objects.get(slug=request.POST["upvoteSubmit"])
+                post_type = post.child().__class__.__name__.lower()
+            except Post.DoesNotExist:
+                error_message = 'The post does not exist anymore.'
+                ReplyNotExistError = {'error': error_message}
+                return JsonResponse(ReplyNotExistError)
 
-            try: # check if the user has upvoted this already
-                upvote = this_object.upvotes.get (
-                    created_by=request.user,
-                )
-                upvote.delete()
+            old_vote, created = Vote.objects.get_or_create(
+                post=post, 
+                created_by=request.user,
+            )
 
-            except Upvote.DoesNotExist:
-                try: # check if the user has downvoted this already
-                    downvote = this_object.downvotes.get (
-                        created_by=request.user,
-                    )
-                    downvote.delete()
-                except Downvote.DoesNotExist:
-                    pass
-                # create new upvote object
-                new_upvote = Upvote(
-                    created_by=request.user,
-                    content_object=this_object,
-                )
-                new_upvote.save()
+            if created or (not created and old_vote.vote_type != 'upvote'):
+                old_vote.vote_type = 'upvote'
+                old_vote.save()
 
-            return render(request, 'post.html', {'post':this_object,  'post_type':post_type})
+            else:
+                old_vote.delete()
+
+            return render(request, 'post.html', {'post':post,  'post_type':post_type})
 
         if 'downvoteSubmit' in request.POST:
-            object_slug = request.POST["downvoteSubmit"]
-            post_type = None
             try:
-                this_object = Question.objects.get(slug=object_slug)
-            except Question.DoesNotExist:
-                try:
-                    this_object = Answer.objects.get(slug=object_slug)
-                except Answer.DoesNotExist:
-                    try:
-                        this_object = Reply.objects.get(slug=object_slug)
-                        post_type = 'reply'
-                    except Reply.DoesNotExist:
-                        error_message = 'The post does not exist anymore.'
-                        ReplyNotExistError = {'error': error_message}
-                        return JsonResponse(ReplyNotExistError)
+                post = Post.objects.get(slug=request.POST["downvoteSubmit"])
+                post_type = post.child().__class__.__name__.lower()
+            except Post.DoesNotExist:
+                error_message = 'The post does not exist anymore.'
+                ReplyNotExistError = {'error': error_message}
+                return JsonResponse(ReplyNotExistError)
 
-            try: # check if the user has downvoted this already
-                downvote = this_object.downvotes.get (
-                    created_by=request.user,
-                )
-                downvote.delete()
+            old_vote, created = Vote.objects.get_or_create(
+                post=post, 
+                created_by=request.user,
+            )
 
-            except Downvote.DoesNotExist:
-                try: # check if the user has upvoted this already
-                    upvote = this_object.upvotes.get (
-                        created_by=request.user,
-                    )
-                    upvote.delete() # remove it
-                except Upvote.DoesNotExist:
-                    pass
-                # create new downvote object
-                new_downvote = Downvote(
-                    created_by=request.user,
-                    content_object=this_object,
-                )
-                new_downvote.save()
+            if created or (not created and old_vote.vote_type != 'downvote'):
+                old_vote.vote_type = 'downvote'
+                old_vote.save()
 
-            return render(request, 'post.html', {'post':this_object,  'post_type':post_type})
+            else:
+                old_vote.delete()
+
+            return render(request, 'post.html', {'post':post,  'post_type':post_type})
 
         if 'editPostSubmit' in request.POST:
             # fetch post by slug

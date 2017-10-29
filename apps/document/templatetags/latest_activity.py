@@ -11,13 +11,13 @@ def latest_activity(question):
     latest_activity_object = question
 
     # if the question has replies
-    if question.replies.count() > 0:
-        latest_activity_object = question.replies.reverse().first()
+    if question.post_reply.count() > 0:
+        latest_activity_object = question.post_reply.reverse().first()
 
     # for each answer, check if the answer has replies
-    for answer in question.answer_set.all():
-        if answer.replies.count() > 0:
-            latest_activity_object = compare_dates(latest_activity_object, answer.replies.all().reverse().first())
+    for answer in question.question_answer.all():
+        if answer.post_reply.count() > 0:
+            latest_activity_object = compare_dates(latest_activity_object, answer.post_reply.all().reverse().first())
         else:
             latest_activity_object = compare_dates(latest_activity_object, answer)
 
