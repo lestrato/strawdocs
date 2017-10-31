@@ -322,6 +322,20 @@ Document
 /*****************
 About
 *****************/
+.panel-cloud {
+  border-radius: 25px;
+  border-width: 1px 2px 5px 2px;  
+  padding: 8px 5px 5px 5px;
+  box-shadow: 1px 2px 1px rgba(0, 0, 0, 0.65);
+  -webkit-text-stroke-width: 2px;
+  -webkit-text-stroke-color: rgba(0, 2, 2, 0.5);
+}
+
+.fa.fa-4x.panel-cloud {
+  width: 100px;
+  margin-bottom: inherit;
+}
+
 .sr-icons {
   visibility: hidden;
 }
@@ -403,18 +417,6 @@ Create
   cursor: pointer;
 }
 
-.panel-cloud {
-  border-left-width: 0px;
-  border-radius: 25px;
-  border-width: 0 0px 4px 0px;
-  padding-bottom: 5px;
-  border-color: #555;
-}
-
-.fa.fa-4x.panel-cloud {
-  width: 100px;
-  margin-bottom: inherit;
-}
 /*****************
 Overview
 *****************/
