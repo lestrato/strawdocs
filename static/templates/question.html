@@ -102,6 +102,7 @@
       <div class="modal-dialog" style="width: 300px; margin: 30px auto;">
           <div class="modal-content">
             <div class="modal-body">
+              <form method="POST" id="reportPostForm">{% csrf_token %}
                 <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
                 <div class="container-fluid">
 
@@ -109,25 +110,26 @@
                     <hr>
                     Select the reason(s) you found to report this post:
                     <div class="checkbox">
-                      <label><input type="checkbox" value="">Inappropriate imagery</label>
+                      <label><input name="report_reason" type="checkbox" value="inappropriate_imagery">Inappropriate imagery</label>
                     </div>
                     <div class="checkbox">
-                      <label><input type="checkbox" value="">URL shortener</label>
+                      <label><input name="report_reason" type="checkbox" value="url_shortener">URL shortener</label>
                     </div>
                     <div class="checkbox">
-                      <label><input type="checkbox" value="">Spam</label>
+                      <label><input name="report_reason" type="checkbox" value="spam">Spam</label>
                     </div>
                     <div class="checkbox">
-                      <label><input type="checkbox" value="">Harassment, hate speech, or verbal abuse</label>
+                      <label><input name="report_reason" type="checkbox" value="harassment">Harassment, hate speech, or verbal abuse</label>
                     </div>
                 </div>
-            <hr>
-            <div class="row-fluid clearfix">
-                <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
-                <button type="button" class="btn btn-danger pull-right"><i class="fa fa-flag fa-fw"></i> Report</button>
-            </div>
+                <hr>
+                <div class="row-fluid clearfix">
+                    <button type="button" class="btn btn-default pull-left" data-dismiss="modal">Close</button>
+                    <input type="hidden" name="reportPostSubmit"/>
+                    <button type="submit" class="btn btn-danger pull-right"><i class="fa fa-flag fa-fw"></i> Report</button>
+                </div>
+              </form>
           </div>
-
         </div>
       </div>
     </div>
@@ -304,10 +306,22 @@
     ajax_post($(this), "#posts", "#posts");
   });
 
+  $(document).on('submit', "#reportPostForm", function(e) {
+    // AJAX for deleting a post
+    e.preventDefault();
+    ajax_post($(this), "#posts", "#posts");
+  });
+
   $(document).on('click', "[type='submit']", function(e) {
     // AJAX for submitting upvotes/downvotes
     e.preventDefault();
     $(this).closest('form').submit();
+  });
+
+  $(document).on('click', "[href='#report-modal']", function(e) {
+    // AJAX for reporting a post
+    e.preventDefault();
+    $('#report-modal').find('[name="reportPostSubmit"]').val($(this).data('post-slug'));
   });
 </script>
 

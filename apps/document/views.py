@@ -409,4 +409,19 @@ class QuestionView(BaseView):
                 if post.created_by == request.user or post.parent_question.created_by == request.user:
                     post.delete()
 
+        if 'reportPostSubmit' in request.POST:
+            # fetch post by slug
+            post = get_object_or_404(Post, slug=request.POST['reportPostSubmit'])
+            new_report_post = ReportPost(
+                user=request.user,
+                post=post,
+            )
+            new_report_post.save()
+            for report_reason in request.POST.getlist('report_reason', []):
+                new_report_post_reason = ReportPostReason(
+                    report_post=new_report_post,
+                    report_choice=report_reason
+                )
+                new_report_post_reason.save()
+
         return HttpResponseRedirect(request.META.get('HTTP_REFERER', '/'))

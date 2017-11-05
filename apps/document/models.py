@@ -85,6 +85,9 @@ class Post(models.Model):
     def downvotes(self):
         return Vote.objects.filter(post=self, vote_type='downvote')
 
+    def __str__(self):  # __unicode__ for py2
+        return self.slug
+
 class Vote(models.Model):
     ''' Every vote has:
     - a type: upvote or downvote
@@ -191,4 +194,46 @@ class UserDocumentFollowing(models.Model):
     document = models.ForeignKey(
         'Document',
         on_delete=models.CASCADE,
+    )
+
+class ReportPost(models.Model):
+    ''' Every report post has:
+    - the user who created it
+    - the post reported
+    - the reason for reporting
+    - the datetime of creation
+    - if it has been closed or not
+    '''
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        blank=False
+    )
+    post = models.ForeignKey(
+        'Post',
+        blank=False
+    )
+    created_on = models.DateTimeField(
+        auto_now_add=True,
+        blank=False,
+    )
+    resolved = models.BooleanField(
+        default=False,
+        blank=False,
+    )
+
+class ReportPostReason(models.Model):
+    REPORT_CHOICES = (
+        ('inappropriate_imagery', 'Inappropriate imagery'),
+        ('url_shortener', 'URL shortener'),
+        ('spam', 'Spam'),
+        ('harassment', 'Harassment, hate speech, or verbal abuse'),
+    )
+    report_post = models.ForeignKey(
+        'ReportPost',
+        blank=False
+    )
+    report_choice = models.CharField(
+        blank=False,
+        max_length=100,
+        choices=REPORT_CHOICES,
     )
