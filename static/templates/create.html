@@ -55,6 +55,7 @@
 
 <script type="text/javascript">
   questionmde = create_simplemde("create-question-editor");
+  var createUnload = false;
   var questionTotal = 1;
   var all_questions = [];
 
@@ -64,6 +65,7 @@
     all_question_mdes = all_questions
     all_question_mdes = all_question_mdes.push(questionmde);
 
+    if (createUnload) return;
     for (var i = 0; i < all_question_mdes; i++) {
       if (all_questions[i].value() != ''){
        return "Your unsaved data will be lost."; 
@@ -71,6 +73,9 @@
     }
   }
 
+  $(document).on('click', '[name="createDocumentSubmit"]', function(e) {
+    createUnload = true;
+  })
 
   $(document).on('click', '#btn-add', function(e) {
       questionTotal += 1;
