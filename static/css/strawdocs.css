@@ -71,7 +71,7 @@ a:hover {
 }
 
 #alert-absolute-div {
-  position:absolute;
+  position:static;
   z-index:1;
   opacity:.9;
   right: 0;

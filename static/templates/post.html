@@ -36,7 +36,12 @@
         {% endif %}
     {% endif %}
   </div>
-  <div class="pull-right"><small>{{ post.created_on|localtime|format_date }}</small> <label class="label label-default">{{post.created_by}}</label>
+  <div class="pull-right">
+    <small>{{ post.created_on|localtime|format_date }}</small> <label class="label label-default">{{post.created_by}}</label>
+    {% if post.reportpost_set.count %}
+      <label class="label label-danger" data-toggle="tooltip" title="This post has been reported {{post.reportpost_set.count}} time{{post.reportpost_set.count|pluralize}}"><i class="fa fa-flag fa-fw"></i> {{post.reportpost_set.count}}</label>
+    {% endif %}
+
     <div class="dropdown pull-right">
       <a href="#" data-toggle="dropdown" class="dropdown-toggle"><b class="caret"></b></a>
       <ul class="dropdown-menu">

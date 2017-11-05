@@ -142,6 +142,9 @@
           if ('{{ login }}' == 'True') {
             $('#login').modal('show');
           }
+          $(document).ready(function(){
+              $('[data-toggle="tooltip"]').tooltip(); 
+          });
         });
         $(document).on('submit', "#account-login-form", function(event) {
           // AJAX for submitting upvotes/downvotes
@@ -169,7 +172,6 @@
                     $('#alert-absolute-div').html(
                       '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
                     )
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 }
             });
         });
@@ -201,7 +203,6 @@
                     $('#alert-absolute-div').html(
                       '<div class="alert alert-danger text-center"><strong>Uh oh!</strong> Something went wrong on our side. <strong>Please try again later.</strong><button type="button" class="close" data-dismiss="alert">×</button></div>'
                     )
-                    $('html, body').animate({ scrollTop: 0 }, 'fast');
                 }
             });
         });
