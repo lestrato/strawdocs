@@ -255,7 +255,12 @@ class QuestionView(BaseView):
             answers = Answer.objects.filter(
                 parent_question=question,
             ).annotate(
-                net_votes=(Count('vote', vote_type='upvote')-Count('vote', vote_type='downvote')),
+                net_votes=models.Sum(
+                    models.Case(
+                        models.When(vote__vote_type='upvote', then=1),
+                        default=-1, output_field=models.IntegerField()
+                    )
+                )
             ).order_by('-net_votes')
         elif sortby == 'newest':
             answers = Answer.objects.filter(
