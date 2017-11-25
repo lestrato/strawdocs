@@ -1,5 +1,5 @@
 {% extends "base.html" %}
-
+{% load static %}
 {% block content %}
 {% if password_reset %}
 <div id="password-reset-modal" class="modal fade">
@@ -70,7 +70,7 @@
 {% endblock %}
 
 {% block scripts %}
-<script src="https://unpkg.com/scrollreveal/dist/scrollreveal.min.js"></script>
+<script src="{% static 'scrollreveal/scrollreveal.min.js' %}"></script>
 {% if password_reset %}
   <script type="text/javascript">
   $(document).ready(function(){
