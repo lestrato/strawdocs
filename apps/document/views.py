@@ -258,10 +258,15 @@ class QuestionView(BaseView):
                 net_votes=models.Sum(
                     models.Case(
                         models.When(vote__vote_type='upvote', then=1),
-                        default=-1, output_field=models.IntegerField()
+                        default=0, output_field=models.IntegerField()
+                    ) + models.Case(
+                        models.When(vote__vote_type='downvote', then=-1),
+                        default=0, output_field=models.IntegerField()
                     )
                 )
             ).order_by('-net_votes')
+            for answer in answers:
+                print answer.net_votes
         elif sortby == 'newest':
             answers = Answer.objects.filter(
                 parent_question=question,
